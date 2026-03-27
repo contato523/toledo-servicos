@@ -208,7 +208,7 @@ td{padding:10px;border-bottom:1px solid var(--border);}
       </div>
       <div id="f-mo-wrap" style="margin-top:14px;">
         <label class="lbl">Valor do Conserto (R$) *</label>
-        <input type="number" id="f-mo" class="input" min="0" step="0.01" placeholder="Ex: 150,00"/>
+        <input type="text" id="f-mo" class="input" inputmode="decimal" onblur="fmtInput('f-mo')" placeholder="Ex: 150,00"/>
       </div>
       <div class="divider"></div>
       <div style="font-size:11px;color:var(--muted);margin-bottom:14px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;">
@@ -218,21 +218,21 @@ td{padding:10px;border-bottom:1px solid var(--border);}
         <div style="font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:600;">Peça 1</div>
         <div class="grid2">
           <div><label class="lbl">Nome da peça</label><input id="f-p1n" class="input" placeholder="Ex: Placa principal"/></div>
-          <div><label class="lbl">Valor (R$)</label><input type="number" id="f-p1v" class="input" min="0" step="0.01" placeholder="Ex: 50,00"/></div>
+          <div><label class="lbl">Valor (R$)</label><input type="text" id="f-p1v" class="input" inputmode="decimal" onblur="fmtInput('f-p1v')" placeholder="Ex: 50,00"/></div>
         </div>
       </div>
       <div style="margin-bottom:12px;">
         <div style="font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:600;">Peça 2</div>
         <div class="grid2">
           <div><label class="lbl">Nome da peça</label><input id="f-p2n" class="input" placeholder="Ex: Capacitor"/></div>
-          <div><label class="lbl">Valor (R$)</label><input type="number" id="f-p2v" class="input" min="0" step="0.01" placeholder="Ex: 50,00"/></div>
+          <div><label class="lbl">Valor (R$)</label><input type="text" id="f-p2v" class="input" inputmode="decimal" onblur="fmtInput('f-p2v')" placeholder="Ex: 50,00"/></div>
         </div>
       </div>
       <div style="margin-bottom:12px;">
         <div style="font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:600;">Peça 3</div>
         <div class="grid2">
           <div><label class="lbl">Nome da peça</label><input id="f-p3n" class="input" placeholder="Ex: Fusível"/></div>
-          <div><label class="lbl">Valor (R$)</label><input type="number" id="f-p3v" class="input" min="0" step="0.01" placeholder="Ex: 50,00"/></div>
+          <div><label class="lbl">Valor (R$)</label><input type="text" id="f-p3v" class="input" inputmode="decimal" onblur="fmtInput('f-p3v')" placeholder="Ex: 50,00"/></div>
         </div>
       </div>
       <div class="divider"></div>
@@ -340,18 +340,18 @@ td{padding:10px;border-bottom:1px solid var(--border);}
             </select>
           </div>
           <div style="margin-top:14px;"><label class="lbl">Defeito / Serviço *</label><textarea id="me-defeito" class="input" rows="3"></textarea></div>
-          <div style="margin-top:14px;"><label class="lbl">Valor do Conserto (R$) *</label><input type="number" id="me-mo" class="input" min="0" step="0.01" placeholder="Ex: 150,00"/></div>
+          <div style="margin-top:14px;"><label class="lbl">Valor do Conserto (R$) *</label><input type="text" id="me-mo" class="input" inputmode="decimal" onblur="fmtInput('me-mo')" placeholder="Ex: 150,00"/></div>
           <div style="margin-top:14px;" class="grid2">
             <div><label class="lbl">Peça 1 Nome</label><input id="me-p1n" class="input"/></div>
-            <div><label class="lbl">Peça 1 Valor</label><input type="number" id="me-p1v" class="input" min="0" step="0.01"/></div>
+            <div><label class="lbl">Peça 1 Valor</label><input type="text" id="me-p1v" class="input" inputmode="decimal" onblur="fmtInput('me-p1v')"/></div>
           </div>
           <div style="margin-top:10px;" class="grid2">
             <div><label class="lbl">Peça 2 Nome</label><input id="me-p2n" class="input"/></div>
-            <div><label class="lbl">Peça 2 Valor</label><input type="number" id="me-p2v" class="input" min="0" step="0.01"/></div>
+            <div><label class="lbl">Peça 2 Valor</label><input type="text" id="me-p2v" class="input" inputmode="decimal" onblur="fmtInput('me-p2v')"/></div>
           </div>
           <div style="margin-top:10px;" class="grid2">
             <div><label class="lbl">Peça 3 Nome</label><input id="me-p3n" class="input"/></div>
-            <div><label class="lbl">Peça 3 Valor</label><input type="number" id="me-p3v" class="input" min="0" step="0.01"/></div>
+            <div><label class="lbl">Peça 3 Valor</label><input type="text" id="me-p3v" class="input" inputmode="decimal" onblur="fmtInput('me-p3v')"/></div>
           </div>
           <div style="margin-top:14px;"><label class="lbl">Observações</label><textarea id="me-obs" class="input" rows="2"></textarea></div>
           <div style="margin-top:14px;"><label class="lbl">Data do Conserto</label><input type="date" id="me-dataconserto" class="input"/></div>
@@ -458,18 +458,18 @@ td{padding:10px;border-bottom:1px solid var(--border);}
         </div>
       </div>
       <div style="margin-top:14px;"><label class="lbl">Defeito / Serviço *</label><textarea id="la-defeito" class="input" rows="3" placeholder="Descreva o defeito..."></textarea></div>
-      <div style="margin-top:14px;"><label class="lbl">Valor do Conserto (R$) *</label><input type="number" id="la-mo" class="input" min="0" step="0.01" placeholder="Ex: 150,00"/></div>
+      <div style="margin-top:14px;"><label class="lbl">Valor do Conserto (R$) *</label><input type="text" id="la-mo" class="input" inputmode="decimal" onblur="fmtInput('la-mo')" placeholder="Ex: 150,00"/></div>
       <div style="margin-top:14px;" class="grid2">
         <div><label class="lbl">Peça 1 Nome</label><input id="la-p1n" class="input"/></div>
-        <div><label class="lbl">Peça 1 Valor</label><input type="number" id="la-p1v" class="input" min="0" step="0.01" placeholder="Ex: 50,00"/></div>
+        <div><label class="lbl">Peça 1 Valor</label><input type="text" id="la-p1v" class="input" inputmode="decimal" onblur="fmtInput('la-p1v')" placeholder="Ex: 50,00"/></div>
       </div>
       <div style="margin-top:10px;" class="grid2">
         <div><label class="lbl">Peça 2 Nome</label><input id="la-p2n" class="input"/></div>
-        <div><label class="lbl">Peça 2 Valor</label><input type="number" id="la-p2v" class="input" min="0" step="0.01" placeholder="Ex: 50,00"/></div>
+        <div><label class="lbl">Peça 2 Valor</label><input type="text" id="la-p2v" class="input" inputmode="decimal" onblur="fmtInput('la-p2v')" placeholder="Ex: 50,00"/></div>
       </div>
       <div style="margin-top:10px;" class="grid2">
         <div><label class="lbl">Peça 3 Nome</label><input id="la-p3n" class="input"/></div>
-        <div><label class="lbl">Peça 3 Valor</label><input type="number" id="la-p3v" class="input" min="0" step="0.01" placeholder="Ex: 50,00"/></div>
+        <div><label class="lbl">Peça 3 Valor</label><input type="text" id="la-p3v" class="input" inputmode="decimal" onblur="fmtInput('la-p3v')" placeholder="Ex: 50,00"/></div>
       </div>
       <div style="margin-top:14px;"><label class="lbl">Observações</label><textarea id="la-obs" class="input" rows="2"></textarea></div>
       <div id="la-dataconserto-wrap" style="margin-top:14px;display:none;"><label class="lbl">Data do Conserto</label><input type="date" id="la-dataconserto" class="input"/></div>
@@ -636,18 +636,21 @@ async function dbCarregarUsuarios(){
   const data = await sbFetch("/rest/v1/usuarios?select=*");
   if(data && data.length>0){
     // Merge DB data into USERS (keep password from local, update extras from DB)
-    USERS = USERS_DEFAULT.map(u=>{
-      const db=data.find(d=>d.id===u.id);
-      if(db) return {...u, nomecompleto:db.nomecompleto||"", email:db.email||"", cpf:db.cpf||""};
-      return u;
+    // Build USERS entirely from DB
+    USERS = data.map(d=>{
+      const def=USERS_DEFAULT.find(u=>u.id===d.id);
+      return {
+        id:d.id, name:d.nome,
+        password: d.password||(def?def.password:""),
+        role: d.id==="joaovictor"?"admin":"tec",
+        profile: d.profile||"tec",
+        nomecompleto:d.nomecompleto||"",
+        email:d.email||"",
+        cpf:d.cpf||""
+      };
     });
-    // Add any extra users from DB not in defaults
-    data.forEach(d=>{
-      if(!USERS.find(u=>u.id===d.id)){
-        USERS.push({id:d.id, name:d.nome, password:d.password||"", role:"tec", profile:d.profile||"tec",
-          nomecompleto:d.nomecompleto||"", email:d.email||"", cpf:d.cpf||""});
-      }
-    });
+    // Make sure admin role is correct
+    USERS = USERS.map(u=>u.id==="joaovictor"?{...u,role:"admin",profile:"admin"}:u);
   }
 }
 
@@ -695,6 +698,17 @@ const VIEWS = ["login","tec","admin","gerenciar","lancar"];
 function showView(v){
   VIEWS.forEach(x=>el("view-"+x).classList.add("hidden"));
   el("view-"+v).classList.remove("hidden");
+}
+
+// ── Formatar valor monetário ─────────────────────────────────────────────────
+function fmtInput(id){
+  const el2=document.getElementById(id); if(!el2||!el2.value)return;
+  const v=parseFloat(el2.value.replace(",","."));
+  if(!isNaN(v)) el2.value=v.toFixed(2).replace(".",",");
+}
+function parseMoney(val){
+  if(!val)return 0;
+  return parseFloat(String(val).replace(",","."))||0;
 }
 
 // ── Cancelado toggle ─────────────────────────────────────────────────────────
@@ -769,6 +783,7 @@ function initTec(){
   el("f-data").value=today();
   const profile=ME.profile||"tec";
   el("f-dataconserto-wrap").style.display=profile==="tec_at"?"block":"none";
+  const osLbl=el("f-os-lbl"); if(osLbl) osLbl.textContent=profile==="tec_at"?"Nº OS":"Nº OS *";
   ["opt-atend","opt-extra","opt-gorjeta"].forEach(id=>{
     const opt=el(id); if(opt) opt.style.display=profile==="tec_at"?"":"none";
   });
@@ -892,8 +907,9 @@ async function salvar(){
   const data=el("f-data").value, aparelho=el("f-aparelho").value,
     os=el("f-os").value, defeito=el("f-defeito").value, mo=el("f-mo").value;
   const aparelhoFinal=aparelho==="Outro"?(el("f-outro").value.trim()||"Outro"):aparelho;
-  if(!data||!aparelho||!os||!defeito||!mo){
-    alert("Preencha os campos obrigatórios: Data, Aparelho, OS, Defeito e Mão de Obra."); return;
+  const profile2=ME.profile||"tec";
+  if(!data||!aparelho||!defeito||!mo||(profile2==="tec"&&!os)){
+    alert("Preencha os campos obrigatórios: Data, Aparelho, Defeito e Valor do Conserto."+(profile2==="tec"?" e OS.":"")); return;
   }
   if(aparelho==="Outro"&&!el("f-outro").value.trim()){
     alert("Por favor, descreva o aparelho no campo 'Qual aparelho?'."); return;
@@ -903,10 +919,10 @@ async function salvar(){
   const srvOriginal = editId ? SERVICOS.find(s=>s.id===editId) : null;
   const entry={
     data,aparelho:aparelhoCompleto,os,defeito,
-    maoDeObra:parseFloat(mo)||0,
-    peca1nome:el("f-p1n").value, peca1valor:parseFloat(el("f-p1v").value)||0,
-    peca2nome:el("f-p2n").value, peca2valor:parseFloat(el("f-p2v").value)||0,
-    peca3nome:el("f-p3n").value, peca3valor:parseFloat(el("f-p3v").value)||0,
+    maoDeObra:parseMoney(mo),
+    peca1nome:el("f-p1n").value, peca1valor:parseMoney(el("f-p1v").value),
+    peca2nome:el("f-p2n").value, peca2valor:parseMoney(el("f-p2v").value),
+    peca3nome:el("f-p3n").value, peca3valor:parseMoney(el("f-p3v").value),
     obs:el("f-obs").value,
     dataConserto:el("f-dataconserto").value||"",
     cancelado:el("f-cancelado").checked||false,
@@ -946,10 +962,10 @@ function startEdit(id){
   el("f-espec-wrap").style.display=aparBase?"block":"none";
   if(aparBase==="Outro"){el("f-outro").value=aparBase;el("f-outro-wrap").style.display="block";}
   el("f-os").value=srv.os; el("f-defeito").value=srv.defeito;
-  el("f-mo").value=srv.maoDeObra;
-  el("f-p1n").value=srv.peca1nome||""; el("f-p1v").value=srv.peca1valor||"";
-  el("f-p2n").value=srv.peca2nome||""; el("f-p2v").value=srv.peca2valor||"";
-  el("f-p3n").value=srv.peca3nome||""; el("f-p3v").value=srv.peca3valor||"";
+  el("f-mo").value=srv.maoDeObra?Number(srv.maoDeObra).toFixed(2).replace(".",","):"";
+  el("f-p1n").value=srv.peca1nome||""; el("f-p1v").value=srv.peca1valor?Number(srv.peca1valor).toFixed(2).replace(".",","):"";
+  el("f-p2n").value=srv.peca2nome||""; el("f-p2v").value=srv.peca2valor?Number(srv.peca2valor).toFixed(2).replace(".",","):"";
+  el("f-p3n").value=srv.peca3nome||""; el("f-p3v").value=srv.peca3valor?Number(srv.peca3valor).toFixed(2).replace(".",","):"";
   el("f-obs").value=srv.obs||"";
   el("f-dataconserto").value=srv.dataConserto||"";
   el("f-cancelado").checked=srv.cancelado||false;
@@ -1172,10 +1188,10 @@ async function salvarEdicaoAdmin(){
     ...srvOriginal,
     data:el("me-data").value, os:el("me-os").value,
     aparelho, defeito:el("me-defeito").value,
-    maoDeObra:parseFloat(el("me-mo").value)||0,
-    peca1nome:el("me-p1n").value, peca1valor:parseFloat(el("me-p1v").value)||0,
-    peca2nome:el("me-p2n").value, peca2valor:parseFloat(el("me-p2v").value)||0,
-    peca3nome:el("me-p3n").value, peca3valor:parseFloat(el("me-p3v").value)||0,
+    maoDeObra:parseMoney(el("me-mo").value),
+    peca1nome:el("me-p1n").value, peca1valor:parseMoney(el("me-p1v").value),
+    peca2nome:el("me-p2n").value, peca2valor:parseMoney(el("me-p2v").value),
+    peca3nome:el("me-p3n").value, peca3valor:parseMoney(el("me-p3v").value),
     obs:el("me-obs").value,
     dataConserto:el("me-dataconserto").value||"",
     cancelado:el("me-cancelado").checked||false,
@@ -1288,10 +1304,10 @@ async function salvarLancar(){
   const aparelhoCompleto=espec?aparelhoFinal+" — "+espec:aparelhoFinal;
   const entry={
     data, os, aparelho:aparelhoCompleto, defeito,
-    maoDeObra:parseFloat(mo)||0,
-    peca1nome:el("la-p1n").value, peca1valor:parseFloat(el("la-p1v").value)||0,
-    peca2nome:el("la-p2n").value, peca2valor:parseFloat(el("la-p2v").value)||0,
-    peca3nome:el("la-p3n").value, peca3valor:parseFloat(el("la-p3v").value)||0,
+    maoDeObra:parseMoney(mo),
+    peca1nome:el("la-p1n").value, peca1valor:parseMoney(el("la-p1v").value),
+    peca2nome:el("la-p2n").value, peca2valor:parseMoney(el("la-p2v").value),
+    peca3nome:el("la-p3n").value, peca3valor:parseMoney(el("la-p3v").value),
     obs:el("la-obs").value,
     dataConserto:el("la-dataconserto").value||"",
     cancelado:el("la-cancelado").checked||false,
