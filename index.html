@@ -1151,8 +1151,7 @@ function renderFiltroTec(){
 }
 
 function renderKpis(){
-  const [wI,wF]=weekRange();
-  const srv_sem=s=>s.data>=wI&&s.data<=wFim;
+  const [wI,wF]=getIntervalo();
   const semSrvs=SERVICOS.filter(s=>s.data>=wI&&s.data<=wF);
   const semAtivos=semSrvs.filter(s=>!s.cancelado);
   const totalConserto=semAtivos.reduce((a,s)=>a+s.maoDeObra,0);
@@ -1162,7 +1161,7 @@ function renderKpis(){
     <div style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.8px;text-transform:uppercase;">Total semana</div>
     <div class="kpi-val" style="color:var(--accent);">${fmt(totalConserto)}</div>
     <div class="kpi-sub">− peças: <span style="color:var(--success);font-weight:700;">${fmt(totalLiq)}</span></div>
-    <div class="kpi-sub">${wI} → ${wF}</div>
+    <div class="kpi-sub">${el("fil-ini").value&&el("fil-fim").value?"Período":"Semana"}: ${wI} → ${wF}</div>
   </div>`;
   tecs().forEach((t,i)=>{
     const c=BAR_COLORS[i%BAR_COLORS.length];
@@ -1182,7 +1181,7 @@ function renderKpis(){
 }
 
 function renderChart(){
-  const [wI,wF]=weekRange();
+  const [wI,wF]=getIntervalo();
   const data=tecs().map((t,i)=>{
     const srvs=SERVICOS.filter(s=>s.tecId===t.id&&s.data>=wI&&s.data<=wF);
     const ativos=srvs.filter(s=>!s.cancelado);
@@ -1219,7 +1218,15 @@ function getFiltrados(){
   }).sort((a,b)=>b.criadoEm-a.criadoEm);
 }
 
+function getIntervalo(){
+  // Returns the active date range: filter dates if set, otherwise current week
+  const fi=el("fil-ini").value, ff=el("fil-fim").value;
+  if(fi&&ff) return [fi,ff];
+  return weekRange();
+}
+
 function renderTabela(){
+  renderKpis(); renderChart(); renderChartReceber(); renderLiqReceber();
   const filtrados=getFiltrados();
   el("tab-count").textContent=filtrados.length;
   const mo=filtrados.reduce((a,s)=>a+s.maoDeObra,0);
@@ -1269,7 +1276,7 @@ async function excluirAdmin(id){
 }
 
 function renderLiqReceber(){
-  const [wI,wF]=weekRange();
+  const [wI,wF]=getIntervalo();
   const wrap=document.getElementById("chart-dif-wrap"); if(!wrap)return;
   const data=tecs().map((t,i)=>{
     const srvs=SERVICOS.filter(s=>s.tecId===t.id&&s.data>=wI&&s.data<=wF);
@@ -1294,7 +1301,7 @@ function renderLiqReceber(){
 }
 
 function renderChartReceber(){
-  const [wI,wF]=weekRange();
+  const [wI,wF]=getIntervalo();
   const data=tecs().map((t,i)=>{
     const srvs=SERVICOS.filter(s=>s.tecId===t.id&&s.data>=wI&&s.data<=wF);
     const profile=t.profile||"tec";
