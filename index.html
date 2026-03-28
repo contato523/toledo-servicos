@@ -183,16 +183,7 @@ td{padding:10px;border-bottom:1px solid var(--border);}
       </div>
       <div style="margin-top:14px;">
         <label class="lbl">Aparelho *</label>
-        <select id="f-aparelho" class="input" onchange="toggleOutro()">
-          <option value="">Selecione...</option>
-          <option>TV</option><option>Celular</option><option>Notebook</option>
-          <option>Tablet</option><option>Monitor</option>
-          <option>Micro-ondas</option><option>Som/Home Theater</option>
-          <option>Videogame</option><option>Venda</option><option>Outro</option>
-          <option id="opt-atend" class="tec-at-only" style="display:none;">Atendimento</option>
-          <option id="opt-extra" class="tec-at-only" style="display:none;">Extra</option>
-          <option id="opt-gorjeta" class="tec-at-only" style="display:none;">Gorjeta</option>
-        </select>
+        <select id="f-aparelho" class="input" onchange="toggleOutro()"><option value="">Selecione...</option></select>
         <div id="f-outro-wrap" style="display:none;margin-top:10px;">
           <label class="lbl">Qual aparelho? *</label>
           <input id="f-outro" class="input" placeholder="Descreva o aparelho..."/>
@@ -332,12 +323,7 @@ td{padding:10px;border-bottom:1px solid var(--border);}
           </div>
           <div style="margin-top:14px;">
             <label class="lbl">Aparelho *</label>
-            <select id="me-aparelho" class="input">
-              <option value="">Selecione...</option>
-              <option>TV</option><option>Celular</option><option>Notebook</option>
-              <option>Tablet</option><option>Monitor</option>
-              <option>Micro-ondas</option><option>Som/Home Theater</option><option>Videogame</option><option>Outro</option>
-            </select>
+            <select id="me-aparelho" class="input"><option value="">Selecione...</option></select>
           </div>
           <div style="margin-top:14px;"><label class="lbl">Defeito / Serviço *</label><textarea id="me-defeito" class="input" rows="3"></textarea></div>
           <div style="margin-top:14px;"><label class="lbl">Valor do Conserto (R$) *</label><input type="text" id="me-mo" class="input" inputmode="decimal" onblur="fmtInput('me-mo')" placeholder="Ex: 150,00"/></div>
@@ -388,13 +374,7 @@ td{padding:10px;border-bottom:1px solid var(--border);}
         </div>
         <div>
           <label class="lbl">Aparelho</label>
-          <select id="fil-ap" class="input" onchange="renderTabela()">
-            <option value="todos">Todos</option>
-            <option>TV</option><option>Celular</option><option>Notebook</option>
-            <option>Tablet</option><option>Monitor</option>
-            <option>Micro-ondas</option><option>Som/Home Theater</option>
-            <option>Videogame</option><option>Venda</option><option>Outro</option>
-          </select>
+          <select id="fil-ap" class="input" onchange="renderTabela()"><option value="todos">Todos</option></select>
         </div>
         <div>
           <label class="lbl">Data início</label>
@@ -448,12 +428,7 @@ td{padding:10px;border-bottom:1px solid var(--border);}
       </div>
       <div style="margin-top:14px;">
         <label class="lbl">Aparelho *</label>
-        <select id="la-aparelho" class="input" onchange="toggleOutroLancar()">
-          <option value="">Selecione...</option>
-          <option>TV</option><option>Celular</option><option>Notebook</option>
-          <option>Tablet</option><option>Monitor</option><option>Micro-ondas</option>
-          <option>Som/Home Theater</option><option>Videogame</option><option>Venda</option><option>Outro</option>
-        </select>
+        <select id="la-aparelho" class="input" onchange="toggleOutroLancar()"><option value="">Selecione...</option></select>
         <div id="la-outro-wrap" style="display:none;margin-top:10px;">
           <label class="lbl">Qual aparelho?</label>
           <input id="la-outro" class="input" placeholder="Descreva o aparelho..."/>
@@ -501,6 +476,32 @@ td{padding:10px;border-bottom:1px solid var(--border);}
 
 
 
+    <!-- Gerenciar Aparelhos -->
+    <div class="card" style="margin-bottom:20px;">
+      <div style="font-family:sans-serif;font-weight:700;font-size:14px;margin-bottom:16px;color:var(--accent);">📱 Gerenciar Aparelhos</div>
+
+      <div style="margin-bottom:16px;">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;">Todos os técnicos</div>
+        <div id="apar-all-lista" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <input id="apar-all-novo" class="input" style="max-width:180px;" placeholder="Novo aparelho..."/>
+          <button class="btn btn-accent btn-sm" onclick="adicionarApar('all')">Adicionar</button>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div style="margin-top:16px;">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;">Apenas Técnico/Atendimento</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Esses itens recebem sempre 100% do valor, sem divisão.</div>
+        <div id="apar-atat-lista" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <input id="apar-atat-novo" class="input" style="max-width:180px;" placeholder="Nova opção..."/>
+          <button class="btn btn-accent btn-sm" onclick="adicionarApar('atat')">Adicionar</button>
+        </div>
+      </div>
+    </div>
+
     <div class="card" style="margin-bottom:20px;">
       <div style="font-family:sans-serif;font-weight:700;font-size:14px;margin-bottom:16px;color:var(--accent);">
         ➕ Adicionar Novo Técnico
@@ -527,6 +528,39 @@ td{padding:10px;border-bottom:1px solid var(--border);}
       <div id="g-err" class="alert-err" style="margin-top:10px;"></div>
       <div id="g-ok" class="alert-ok" style="margin-top:10px;"></div>
       <button class="btn btn-accent" style="margin-top:16px;" onclick="adicionarTec()">Adicionar Técnico</button>
+    </div>
+
+    <!-- Opções extras Técnico/Atendimento -->
+    <div class="card" style="margin-bottom:20px;">
+      <div style="font-family:sans-serif;font-weight:700;font-size:14px;margin-bottom:12px;color:var(--accent);">⚙️ Opções extras (apenas Técnico/Atendimento)</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Aparecem na lista de aparelhos para Renan/Elisson. Recebem 100% do valor sem divisão.</div>
+      <div id="opts-lista" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;"></div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <input id="opts-novo" class="input" style="max-width:200px;" placeholder="Nova opção..."/>
+        <button class="btn btn-accent btn-sm" onclick="adicionarOpt()">Adicionar</button>
+      </div>
+    </div>
+
+    <!-- Gerenciar lista de Aparelhos -->
+    <div class="card" style="margin-bottom:20px;">
+      <div style="font-family:sans-serif;font-weight:700;font-size:14px;margin-bottom:12px;color:var(--accent);">📱 Gerenciar lista de Aparelhos</div>
+      <div style="margin-bottom:16px;">
+        <div style="font-size:12px;color:var(--muted);font-weight:600;margin-bottom:10px;text-transform:uppercase;letter-spacing:.8px;">Todos os técnicos</div>
+        <div id="apar-all-lista" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <input id="apar-all-novo" class="input" style="max-width:180px;" placeholder="Novo aparelho..."/>
+          <button class="btn btn-accent btn-sm" onclick="adicionarApar('all')">Adicionar</button>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div style="margin-top:16px;">
+        <div style="font-size:12px;color:var(--muted);font-weight:600;margin-bottom:10px;text-transform:uppercase;letter-spacing:.8px;">Apenas Técnico/Atendimento</div>
+        <div id="apar-atat-lista" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <input id="apar-atat-novo" class="input" style="max-width:180px;" placeholder="Novo aparelho..."/>
+          <button class="btn btn-accent btn-sm" onclick="adicionarApar('atat')">Adicionar</button>
+        </div>
+      </div>
     </div>
 
     <div class="card">
@@ -824,6 +858,7 @@ function initTec(){
   el("tec-info-extra").innerHTML=infos.length
     ? `<div style="display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);align-items:center;">${infos.join("")}${editBtn}</div>`
     : `<div>${editBtn}</div>`;
+  preencherTodosSelects();
   el("f-data").value=today();
   const profile=ME.profile||"tec";
   el("f-dataconserto-wrap").style.display=profile==="tec_at"?"block":"none";
@@ -987,7 +1022,7 @@ function startEdit(id){
   const srv=SERVICOS.find(s=>s.id===id); if(!srv)return;
   el("edit-id").value=id;
   // Check if saved aparelho matches a standard option
-  const stdOpts=["TV","Celular","Notebook","Tablet","Monitor","Ar-condicionado","Micro-ondas","Som/Home Theater","Videogame","Venda","Outro","Atendimento","Extra","Gorjeta"];
+  const stdOpts=[...APARELHOS_CFG.all,...APARELHOS_CFG.atat,...OPCOES_EXTRAS];
   const isStd=stdOpts.includes(srv.aparelho);
   el("f-data").value=srv.data;
   el("f-aparelho").value=isStd?srv.aparelho:"Outro";
@@ -995,7 +1030,7 @@ function startEdit(id){
   else{el("f-outro").value=""; el("f-outro-wrap").style.display="none";}
   // Restore espec from aparelho string
   const sepIdx=srv.aparelho.indexOf(" — ");
-  const stdOpts2=["TV","Celular","Notebook","Tablet","Monitor","Ar-condicionado","Micro-ondas","Som/Home Theater","Videogame","Venda","Outro","Atendimento","Extra","Gorjeta"];
+  const stdOpts2=[...APARELHOS_CFG.all,...APARELHOS_CFG.atat,...OPCOES_EXTRAS];
   let aparBase=sepIdx>-1?srv.aparelho.substring(0,sepIdx):srv.aparelho;
   let especVal=sepIdx>-1?srv.aparelho.substring(sepIdx+3):"";
   if(!stdOpts2.includes(aparBase)){especVal=aparBase+(especVal?" — "+especVal:"");aparBase="Outro";}
@@ -1042,6 +1077,7 @@ async function excluirTec(id){
 
 // ── Admin ─────────────────────────────────────────────────────────────────────
 function initAdmin(){
+  preencherTodosSelects();
   renderFiltroTec();
   renderKpis();
   renderChart();
@@ -1274,13 +1310,35 @@ async function salvarEdicaoAdmin(){
 }
 
 // ── Aparelhos por perfil ─────────────────────────────────────────────────────
+function preencherSelect(selId, isTecAt){
+  const sel=document.getElementById(selId); if(!sel)return;
+  const cur=sel.value;
+  const isFil=selId==="fil-ap";
+  const base=[...APARELHOS_CFG.all];
+  // Extra aparelhos só para tec_at
+  const extras=isTecAt?APARELHOS_CFG.atat.filter(o=>!base.includes(o)):[];
+  // Opções extras (100%) só para tec_at ou lancar/admin
+  const opcExtras=(isTecAt||selId==="la-aparelho"||selId==="me-aparelho")?OPCOES_EXTRAS:[];
+  const opcoes=[...base,...extras,...opcExtras];
+  sel.innerHTML=(isFil?'<option value="todos">Todos</option>':'<option value="">Selecione...</option>')+
+    opcoes.map(o=>`<option value="${o}">${o}</option>`).join("");
+  if(cur) sel.value=cur;
+}
+function preencherTodosSelects(){
+  const profile=ME?ME.profile||"tec":"tec";
+  const isTecAt=profile==="tec_at";
+  preencherSelect("f-aparelho", isTecAt);
+  preencherSelect("la-aparelho", true);   // gestor pode lançar para qualquer perfil
+  preencherSelect("me-aparelho", true);
+  preencherSelect("fil-ap", true);
+}
 function renderAparListas(){
-  const wrap_all=document.getElementById("apar-all-lista");
-  const wrap_at=document.getElementById("apar-atat-lista");
-  if(!wrap_all||!wrap_at) return;
+  const wa=document.getElementById("apar-all-lista");
+  const wb=document.getElementById("apar-atat-lista");
+  if(!wa||!wb)return;
   const chip=(o,tipo,i)=>`<span style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;display:inline-flex;align-items:center;gap:6px;">${o}<button onclick="removerApar('${tipo}',${i})" style="background:none;border:none;cursor:pointer;color:var(--danger);font-size:14px;line-height:1;">×</button></span>`;
-  wrap_all.innerHTML=APARELHOS_CFG.all.map((o,i)=>chip(o,'all',i)).join("");
-  wrap_at.innerHTML=APARELHOS_CFG.atat.map((o,i)=>chip(o,'atat',i)).join("");
+  wa.innerHTML=APARELHOS_CFG.all.map((o,i)=>chip(o,'all',i)).join("");
+  wb.innerHTML=APARELHOS_CFG.atat.map((o,i)=>chip(o,'atat',i)).join("");
 }
 function adicionarApar(tipo){
   const inputId=tipo==="all"?"apar-all-novo":"apar-atat-novo";
@@ -1291,7 +1349,7 @@ function adicionarApar(tipo){
   saveApar(APARELHOS_CFG);
   document.getElementById(inputId).value="";
   renderAparListas();
-  atualizarSelectsApar();
+  preencherTodosSelects();
 }
 function removerApar(tipo,i){
   const arr=tipo==="all"?APARELHOS_CFG.all:APARELHOS_CFG.atat;
@@ -1299,29 +1357,9 @@ function removerApar(tipo,i){
   arr.splice(i,1);
   saveApar(APARELHOS_CFG);
   renderAparListas();
-  atualizarSelectsApar();
+  preencherTodosSelects();
 }
-function atualizarSelectsApar(){
-  // Update all aparelho selects
-  ["f-aparelho","la-aparelho","me-aparelho","fil-ap"].forEach(selId=>{
-    const sel=document.getElementById(selId); if(!sel) return;
-    const cur=sel.value;
-    // Keep Outro and dynamic extras
-    const isLancar=selId==="la-aparelho";
-    const isFil=selId==="fil-ap";
-    const isME=selId==="me-aparelho";
-    const profile=ME?ME.profile||"tec":"tec";
-    const isTecAt=profile==="tec_at";
-    // Build options
-    let base=isFil?["todos",...APARELHOS_CFG.all]:APARELHOS_CFG.all;
-    let extras=isTecAt||isLancar||isME?APARELHOS_CFG.atat.filter(o=>!base.includes(o)):[];
-    let opcExtras=(isTecAt||isLancar||isME)?OPCOES_EXTRAS:[];
-    const allOpts=[...base,...extras,...opcExtras];
-    sel.innerHTML=(isFil?'<option value="todos">Todos</option>':'<option value="">Selecione...</option>')+
-      allOpts.filter(o=>o!=="todos").map(o=>`<option>${o}</option>`).join("");
-    if(cur) sel.value=cur;
-  });
-}
+function atualizarSelectsApar(){ preencherTodosSelects(); }
 
 // ── Opções Extras ────────────────────────────────────────────────────────────
 function renderOpts(){
@@ -1340,35 +1378,16 @@ function adicionarOpt(){
   saveOpts(OPCOES_EXTRAS);
   el("opts-novo").value="";
   renderOpts();
-  atualizarOptsSelect();
+  preencherTodosSelects();
 }
 function removerOpt(i){
   if(!confirm(`Remover "${OPCOES_EXTRAS[i]}"?`))return;
   OPCOES_EXTRAS=OPCOES_EXTRAS.filter((_,idx)=>idx!==i);
   saveOpts(OPCOES_EXTRAS);
   renderOpts();
-  atualizarOptsSelect();
+  preencherTodosSelects();
 }
-function atualizarOptsSelect(){
-  // Update tec form
-  ["opt-atend","opt-extra","opt-gorjeta"].forEach(id=>{ const e=el(id); if(e)e.remove(); });
-  const sel=el("f-aparelho"); if(!sel)return;
-  const profile=ME?ME.profile||"tec":"tec";
-  OPCOES_EXTRAS.forEach(o=>{
-    const opt=document.createElement("option");
-    opt.value=o; opt.textContent=o;
-    opt.style.display=profile==="tec_at"?"":"none";
-    sel.appendChild(opt);
-  });
-  // Update lancar form
-  const lasel=el("la-aparelho"); if(!lasel)return;
-  lasel.querySelectorAll(".la-extra-opt").forEach(e=>e.remove());
-  OPCOES_EXTRAS.forEach(o=>{
-    const opt=document.createElement("option");
-    opt.value=o; opt.textContent=o; opt.className="la-extra-opt";
-    lasel.appendChild(opt);
-  });
-}
+
 
 // ── Lançar Serviço (Gestor) ───────────────────────────────────────────────────
 function atualizarFormLancar(){
@@ -1394,6 +1413,7 @@ function initLancar(){
     const o=document.createElement("option");
     o.value=t.id; o.textContent=t.name; sel.appendChild(o);
   });
+  preencherTodosSelects();
   el("la-data").value=today();
   el("la-aparelho").querySelectorAll(".la-extra-opt").forEach(e=>e.remove());
   OPCOES_EXTRAS.forEach(o=>{
@@ -1469,7 +1489,7 @@ function showView(v){
   const target=el("view-"+v); if(!target)return;
   target.classList.remove("hidden");
   target.style.display=(v==="login")?"flex":"block";
-  if(v==="gerenciar"){renderGLista();}
+  if(v==="gerenciar"){renderGLista();renderOpts();renderAparListas();}
   if(v==="admin"){initAdmin();}
   if(v==="lancar"){initLancar();}
 }
