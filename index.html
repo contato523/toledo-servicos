@@ -370,6 +370,12 @@ td{padding:10px;border-bottom:1px solid var(--border);}
       </div>
     </div>
 
+    <!-- Tabela Líquido vs A Receber -->
+    <div class="card" style="margin-bottom:24px;">
+      <div style="font-family:sans-serif;font-weight:700;font-size:14px;margin-bottom:14px;">📋 Líquido vs A Receber — Semana Atual</div>
+      <div style="overflow-x:auto;"><table id="tab-liq-receber" style="width:100%;border-collapse:collapse;font-size:13px;"></table></div>
+    </div>
+
     <!-- Filtros -->
     <div class="card" style="margin-bottom:16px;">
       <div style="font-family:sans-serif;font-weight:700;font-size:14px;margin-bottom:14px;">🔍 Filtrar Serviços</div>
@@ -414,7 +420,7 @@ td{padding:10px;border-bottom:1px solid var(--border);}
           <thead>
             <tr>
               <th>Data</th><th>Aparelho</th><th>Descrição</th><th>OS</th>
-              <th>Técnico</th><th>Valor do Conserto</th><th>Peças</th><th>A Receber</th><th></th>
+              <th>Técnico</th><th>Valor do Conserto</th><th>Peças</th><th>A Receber</th><th>Líquido</th><th></th>
             </tr>
           </thead>
           <tbody id="tab-body"></tbody>
@@ -458,18 +464,18 @@ td{padding:10px;border-bottom:1px solid var(--border);}
         </div>
       </div>
       <div style="margin-top:14px;"><label class="lbl">Defeito / Serviço *</label><textarea id="la-defeito" class="input" rows="3" placeholder="Descreva o defeito..."></textarea></div>
-      <div style="margin-top:14px;"><label class="lbl">Valor do Conserto (R$) *</label><input type="text" id="la-mo" class="input" inputmode="decimal" onblur="fmtInput('la-mo')" placeholder="Ex: 150,00"/></div>
+      <div style="margin-top:14px;"><label class="lbl">Valor do Conserto (R$) *</label><input type="text" id="la-mo" class="input" inputmode="decimal" onblur="fmtInput('la-mo')" placeholder="Ex: 150,00" placeholder="Ex: 150,00"/></div>
       <div style="margin-top:14px;" class="grid2">
         <div><label class="lbl">Peça 1 Nome</label><input id="la-p1n" class="input"/></div>
-        <div><label class="lbl">Peça 1 Valor</label><input type="text" id="la-p1v" class="input" inputmode="decimal" onblur="fmtInput('la-p1v')" placeholder="Ex: 50,00"/></div>
+        <div><label class="lbl">Peça 1 Valor</label><input type="text" id="la-p1v" class="input" inputmode="decimal" onblur="fmtInput('la-p1v')" placeholder="Ex: 50,00" placeholder="Ex: 50,00"/></div>
       </div>
       <div style="margin-top:10px;" class="grid2">
         <div><label class="lbl">Peça 2 Nome</label><input id="la-p2n" class="input"/></div>
-        <div><label class="lbl">Peça 2 Valor</label><input type="text" id="la-p2v" class="input" inputmode="decimal" onblur="fmtInput('la-p2v')" placeholder="Ex: 50,00"/></div>
+        <div><label class="lbl">Peça 2 Valor</label><input type="text" id="la-p2v" class="input" inputmode="decimal" onblur="fmtInput('la-p2v')" placeholder="Ex: 50,00" placeholder="Ex: 50,00"/></div>
       </div>
       <div style="margin-top:10px;" class="grid2">
         <div><label class="lbl">Peça 3 Nome</label><input id="la-p3n" class="input"/></div>
-        <div><label class="lbl">Peça 3 Valor</label><input type="text" id="la-p3v" class="input" inputmode="decimal" onblur="fmtInput('la-p3v')" placeholder="Ex: 50,00"/></div>
+        <div><label class="lbl">Peça 3 Valor</label><input type="text" id="la-p3v" class="input" inputmode="decimal" onblur="fmtInput('la-p3v')" placeholder="Ex: 50,00" placeholder="Ex: 50,00"/></div>
       </div>
       <div style="margin-top:14px;"><label class="lbl">Observações</label><textarea id="la-obs" class="input" rows="2"></textarea></div>
       <div id="la-dataconserto-wrap" style="margin-top:14px;display:none;"><label class="lbl">Data do Conserto</label><input type="date" id="la-dataconserto" class="input"/></div>
@@ -495,12 +501,34 @@ td{padding:10px;border-bottom:1px solid var(--border);}
 
     <!-- Opções Extras -->
     <div class="card" style="margin-bottom:20px;">
-      <div style="font-family:sans-serif;font-weight:700;font-size:14px;margin-bottom:12px;color:var(--accent);">⚙️ Opções extras (Atendimento/Extra/Gorjeta)</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Essas opções aparecem na lista de aparelhos para técnicos com perfil Técnico/Atendimento.</div>
+      <div style="font-family:sans-serif;font-weight:700;font-size:14px;margin-bottom:12px;color:var(--accent);">⚙️ Opções extras (apenas Técnico/Atendimento)</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Aparecem na lista de aparelhos apenas para Renan/Elisson. Recebem 100% do valor.</div>
       <div id="opts-lista" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;"></div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
         <input id="opts-novo" class="input" style="max-width:200px;" placeholder="Nova opção..."/>
         <button class="btn btn-accent btn-sm" onclick="adicionarOpt()">Adicionar</button>
+      </div>
+    </div>
+
+    <!-- Aparelhos por perfil -->
+    <div class="card" style="margin-bottom:20px;">
+      <div style="font-family:sans-serif;font-weight:700;font-size:14px;margin-bottom:12px;color:var(--accent);">📱 Gerenciar lista de Aparelhos</div>
+      <div style="margin-bottom:14px;">
+        <div style="font-size:12px;color:var(--muted);font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:.8px;">Todos os técnicos</div>
+        <div id="apar-all-lista" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <input id="apar-all-novo" class="input" style="max-width:180px;" placeholder="Novo aparelho..."/>
+          <button class="btn btn-accent btn-sm" onclick="adicionarApar('all')">Adicionar</button>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div>
+        <div style="font-size:12px;color:var(--muted);font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:.8px;">Apenas Técnico/Atendimento</div>
+        <div id="apar-atat-lista" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <input id="apar-atat-novo" class="input" style="max-width:180px;" placeholder="Novo aparelho..."/>
+          <button class="btn btn-accent btn-sm" onclick="adicionarApar('atat')">Adicionar</button>
+        </div>
       </div>
     </div>
 
@@ -592,6 +620,12 @@ async function dbExcluir(dbId){
 const SK_U = "toledo_users_v1";
 const SK_OPTS = "toledo_opts_v1";
 const OPTS_DEFAULT = ["Atendimento","Extra","Gorjeta"];
+const SK_APAR = "toledo_apar_v1";
+const APAR_DEFAULT_ALL = ["TV","Celular","Notebook","Tablet","Monitor","Micro-ondas","Som/Home Theater","Videogame","Venda","Outro"];
+const APAR_DEFAULT_ATAT = ["TV","Celular","Notebook","Tablet","Monitor","Micro-ondas","Som/Home Theater","Videogame","Venda","Outro"];
+function loadApar(){try{const r=localStorage.getItem(SK_APAR);if(!r)return{all:[...APAR_DEFAULT_ALL],atat:[...APAR_DEFAULT_ATAT]};return JSON.parse(r);}catch{return{all:[...APAR_DEFAULT_ALL],atat:[...APAR_DEFAULT_ATAT]};}}
+function saveApar(a){try{localStorage.setItem(SK_APAR,JSON.stringify(a));}catch{}}
+let APARELHOS_CFG = loadApar();
 function loadOpts(){try{const r=localStorage.getItem(SK_OPTS);if(!r)return[...OPTS_DEFAULT];const p=JSON.parse(r);return(p&&p.length>0)?p:[...OPTS_DEFAULT];}catch{return[...OPTS_DEFAULT];}}
 function saveOpts(o){try{localStorage.setItem(SK_OPTS,JSON.stringify(o));}catch{}}
 let OPCOES_EXTRAS = loadOpts();
@@ -691,6 +725,18 @@ function weekRange(){
 function slugify(n){return n.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g,"_").replace(/[^a-z0-9_]/g,"");}
 function totalPecas(s){return(s.peca1valor||0)+(s.peca2valor||0)+(s.peca3valor||0);}
 function tecs(){return USERS.filter(u=>u.role==="tec");}
+function tecsEExcluidos(){
+  // Get all unique tecIds from SERVICOS that aren't in USERS
+  const ids=new Set(SERVICOS.map(s=>s.tecId));
+  const extras=[];
+  ids.forEach(id=>{
+    if(!USERS.find(u=>u.id===id)){
+      const nome=SERVICOS.find(s=>s.tecId===id)?.tecNome||id;
+      extras.push({id,name:nome+"(inativo)",role:"tec",profile:"tec"});
+    }
+  });
+  return [...tecs(),...extras];
+}
 function el(id){return document.getElementById(id);}
 
 // ── Views ─────────────────────────────────────────────────────────────────────
@@ -738,6 +784,9 @@ function initLogin(){
 
 async function doLogin(){
   const uid=el("l-user").value, pass=el("l-pass").value;
+  // Load fresh from DB before checking password
+  await dbCarregarUsuarios();
+  initLogin();
   const found=USERS.find(u=>u.id===uid&&u.password===pass);
   if(!found){el("l-err").textContent="Usuário ou senha incorretos.";return;}
   el("l-err").textContent="";
@@ -749,9 +798,7 @@ async function doLogin(){
   else{el("tb-chip").classList.add("hidden");}
   sessionStorage.setItem("toledo_me", JSON.stringify(ME));
   el("topbar").style.opacity="0.5";
-  await dbCarregarUsuarios();
   await dbCarregarServicos();
-  // Refresh ME with updated data from DB
   ME={...USERS.find(u=>u.id===ME.id)||ME};
   sessionStorage.setItem("toledo_me",JSON.stringify(ME));
   el("topbar").style.opacity="1";
@@ -1005,12 +1052,13 @@ function initAdmin(){
   renderChart();
   renderTabela();
   renderChartReceber();
+  renderLiqReceber();
 }
 
 function renderFiltroTec(){
   const sel=el("fil-tec");
   sel.innerHTML='<option value="todos">Todos</option>';
-  tecs().forEach(t=>{
+  tecsEExcluidos().forEach(t=>{
     const o=document.createElement("option");
     o.value=t.id; o.textContent=t.name; sel.appendChild(o);
   });
@@ -1116,6 +1164,7 @@ function renderTabela(){
       <td style="white-space:nowrap;font-size:12px;">${srv.tecNome}</td>
       <td style="white-space:nowrap;font-weight:700;color:${cancelado?"var(--danger)":"var(--success)"};">${cancelado?"—":fmt(srv.maoDeObra)}</td>
       <td style="white-space:nowrap;color:var(--muted);">${tp>0?fmt(tp):"—"}</td>
+      <td style="white-space:nowrap;font-size:11px;color:var(--muted);">${cancelado?"—":fmt(srv.maoDeObra-tp)}</td>
       <td style="white-space:nowrap;">
         <button class="btn btn-outline-accent2 btn-sm" style="margin-right:4px;" onclick="abrirModalEdit('${srv.id}')">✎</button>
         <button class="btn btn-outline-danger btn-sm" onclick="excluirAdmin('${srv.id}')">✕</button>
@@ -1129,7 +1178,53 @@ async function excluirAdmin(id){
   const srv=SERVICOS.find(s=>s.id===id);
   if(srv&&srv._dbId) await dbExcluir(srv._dbId);
   SERVICOS=SERVICOS.filter(s=>s.id!==id);
-  renderTabela(); renderKpis(); renderChart(); renderChartReceber();
+  renderTabela(); renderKpis(); renderChart(); renderChartReceber(); renderLiqReceber();
+}
+
+function renderLiqReceber(){
+  const [wI,wF]=weekRange();
+  const tbl=document.getElementById("tab-liq-receber"); if(!tbl)return;
+  const rows=tecs().map(t=>{
+    const srvs=SERVICOS.filter(s=>s.tecId===t.id&&s.data>=wI&&s.data<=wF);
+    const ativos=srvs.filter(s=>!s.cancelado);
+    const profile=t.profile||"tec";
+    const conserto=ativos.reduce((a,s)=>a+s.maoDeObra,0);
+    const pcs=ativos.reduce((a,s)=>a+totalPecas(s),0);
+    const liq=conserto-pcs;
+    const receber=srvs.reduce((a,s)=>a+calcReceber(s,profile),0);
+    return{nome:t.name,conserto,pcs,liq,receber};
+  });
+  const totConserto=rows.reduce((a,r)=>a+r.conserto,0);
+  const totPcs=rows.reduce((a,r)=>a+r.pcs,0);
+  const totLiq=rows.reduce((a,r)=>a+r.liq,0);
+  const totReceber=rows.reduce((a,r)=>a+r.receber,0);
+  tbl.innerHTML=`
+    <thead><tr style="border-bottom:2px solid var(--border);">
+      <th style="text-align:left;padding:8px 10px;color:var(--muted);font-size:11px;font-weight:600;">Técnico</th>
+      <th style="text-align:right;padding:8px 10px;color:var(--muted);font-size:11px;font-weight:600;">Conserto</th>
+      <th style="text-align:right;padding:8px 10px;color:var(--muted);font-size:11px;font-weight:600;">Peças</th>
+      <th style="text-align:right;padding:8px 10px;color:var(--muted);font-size:11px;font-weight:600;">Líquido</th>
+      <th style="text-align:right;padding:8px 10px;color:var(--muted);font-size:11px;font-weight:600;">A Receber</th>
+      <th style="text-align:right;padding:8px 10px;color:var(--muted);font-size:11px;font-weight:600;">Diferença</th>
+    </tr></thead>
+    <tbody>
+      ${rows.map(r=>`<tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:9px 10px;font-weight:700;">${r.nome}</td>
+        <td style="padding:9px 10px;text-align:right;color:var(--success);">${fmt(r.conserto)}</td>
+        <td style="padding:9px 10px;text-align:right;color:var(--muted);">${fmt(r.pcs)}</td>
+        <td style="padding:9px 10px;text-align:right;color:var(--accent2);">${fmt(r.liq)}</td>
+        <td style="padding:9px 10px;text-align:right;color:var(--accent);font-weight:700;">${fmt(r.receber)}</td>
+        <td style="padding:9px 10px;text-align:right;color:${r.liq-r.receber>=0?"var(--success)":"var(--danger)"};">${fmt(r.liq-r.receber)}</td>
+      </tr>`).join("")}
+      <tr style="border-top:2px solid var(--border);font-weight:700;background:var(--surface);">
+        <td style="padding:9px 10px;">Total</td>
+        <td style="padding:9px 10px;text-align:right;color:var(--success);">${fmt(totConserto)}</td>
+        <td style="padding:9px 10px;text-align:right;color:var(--muted);">${fmt(totPcs)}</td>
+        <td style="padding:9px 10px;text-align:right;color:var(--accent2);">${fmt(totLiq)}</td>
+        <td style="padding:9px 10px;text-align:right;color:var(--accent);">${fmt(totReceber)}</td>
+        <td style="padding:9px 10px;text-align:right;color:${totLiq-totReceber>=0?"var(--success)":"var(--danger)"};">${fmt(totLiq-totReceber)}</td>
+      </tr>
+    </tbody>`;
 }
 
 function renderChartReceber(){
@@ -1198,9 +1293,59 @@ async function salvarEdicaoAdmin(){
   };
   await dbSalvar(entry);
   SERVICOS=SERVICOS.map(s=>s.id===id?entry:s);
-  renderTabela(); renderKpis(); renderChart(); renderChartReceber();
+  renderTabela(); renderKpis(); renderChart(); renderChartReceber(); renderLiqReceber();
   const ok=el("me-ok"); ok.classList.remove("hidden");
   setTimeout(()=>{ok.classList.add("hidden"); fecharModalEdit();},1500);
+}
+
+// ── Aparelhos por perfil ─────────────────────────────────────────────────────
+function renderAparListas(){
+  const wrap_all=document.getElementById("apar-all-lista");
+  const wrap_at=document.getElementById("apar-atat-lista");
+  if(!wrap_all||!wrap_at) return;
+  const chip=(o,tipo,i)=>`<span style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;display:inline-flex;align-items:center;gap:6px;">${o}<button onclick="removerApar('${tipo}',${i})" style="background:none;border:none;cursor:pointer;color:var(--danger);font-size:14px;line-height:1;">×</button></span>`;
+  wrap_all.innerHTML=APARELHOS_CFG.all.map((o,i)=>chip(o,'all',i)).join("");
+  wrap_at.innerHTML=APARELHOS_CFG.atat.map((o,i)=>chip(o,'atat',i)).join("");
+}
+function adicionarApar(tipo){
+  const inputId=tipo==="all"?"apar-all-novo":"apar-atat-novo";
+  const v=document.getElementById(inputId).value.trim(); if(!v)return;
+  const arr=tipo==="all"?APARELHOS_CFG.all:APARELHOS_CFG.atat;
+  if(arr.find(o=>o.toLowerCase()===v.toLowerCase())){alert("Já existe.");return;}
+  arr.push(v);
+  saveApar(APARELHOS_CFG);
+  document.getElementById(inputId).value="";
+  renderAparListas();
+  atualizarSelectsApar();
+}
+function removerApar(tipo,i){
+  const arr=tipo==="all"?APARELHOS_CFG.all:APARELHOS_CFG.atat;
+  if(!confirm(`Remover "${arr[i]}"?`))return;
+  arr.splice(i,1);
+  saveApar(APARELHOS_CFG);
+  renderAparListas();
+  atualizarSelectsApar();
+}
+function atualizarSelectsApar(){
+  // Update all aparelho selects
+  ["f-aparelho","la-aparelho","me-aparelho","fil-ap"].forEach(selId=>{
+    const sel=document.getElementById(selId); if(!sel) return;
+    const cur=sel.value;
+    // Keep Outro and dynamic extras
+    const isLancar=selId==="la-aparelho";
+    const isFil=selId==="fil-ap";
+    const isME=selId==="me-aparelho";
+    const profile=ME?ME.profile||"tec":"tec";
+    const isTecAt=profile==="tec_at";
+    // Build options
+    let base=isFil?["todos",...APARELHOS_CFG.all]:APARELHOS_CFG.all;
+    let extras=isTecAt||isLancar||isME?APARELHOS_CFG.atat.filter(o=>!base.includes(o)):[];
+    let opcExtras=(isTecAt||isLancar||isME)?OPCOES_EXTRAS:[];
+    const allOpts=[...base,...extras,...opcExtras];
+    sel.innerHTML=(isFil?'<option value="todos">Todos</option>':'<option value="">Selecione...</option>')+
+      allOpts.filter(o=>o!=="todos").map(o=>`<option>${o}</option>`).join("");
+    if(cur) sel.value=cur;
+  });
 }
 
 // ── Opções Extras ────────────────────────────────────────────────────────────
@@ -1270,7 +1415,7 @@ function toggleOutroLancar(){
 function initLancar(){
   const sel=el("la-tec");
   sel.innerHTML='<option value="">Selecione o técnico...</option>';
-  tecs().forEach(t=>{
+  tecsEExcluidos().forEach(t=>{
     const o=document.createElement("option");
     o.value=t.id; o.textContent=t.name; sel.appendChild(o);
   });
@@ -1349,7 +1494,7 @@ function showView(v){
   const target=el("view-"+v); if(!target)return;
   target.classList.remove("hidden");
   target.style.display=(v==="login")?"flex":"block";
-  if(v==="gerenciar"){renderGLista();renderOpts();}
+  if(v==="gerenciar"){renderGLista();renderOpts();renderAparListas();}
   if(v==="admin"){initAdmin();}
   if(v==="lancar"){initLancar();}
 }
