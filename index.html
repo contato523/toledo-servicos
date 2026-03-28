@@ -82,7 +82,7 @@ td{padding:10px;border-bottom:1px solid var(--border);}
 .alert-err{color:var(--danger);font-size:12px;}
 
 /* HIDDEN */
-.hidden{display:none!important;}
+.hidden{display:none!important;} .modal-overlay{display:none;}
 
 /* BANNER TECNICO */
 .banner-tec{display:flex;align-items:center;justify-content:space-between;
@@ -370,10 +370,10 @@ td{padding:10px;border-bottom:1px solid var(--border);}
       </div>
     </div>
 
-    <!-- Tabela Líquido vs A Receber -->
+    <!-- Gráfico Diferença Líquido vs A Receber -->
     <div class="card" style="margin-bottom:24px;">
-      <div style="font-family:sans-serif;font-weight:700;font-size:14px;margin-bottom:14px;">📋 Líquido vs A Receber — Semana Atual</div>
-      <div style="overflow-x:auto;"><table id="tab-liq-receber" style="width:100%;border-collapse:collapse;font-size:13px;"></table></div>
+      <div style="font-family:sans-serif;font-weight:700;font-size:14px;margin-bottom:14px;">📊 Diferença Líquido − A Receber — Semana Atual</div>
+      <div id="chart-dif-wrap" style="display:flex;align-items:flex-end;gap:10px;height:150px;padding:0 8px;"></div>
     </div>
 
     <!-- Filtros -->
@@ -499,38 +499,7 @@ td{padding:10px;border-bottom:1px solid var(--border);}
     <button class="btn btn-outline-muted btn-sm" style="margin-bottom:20px;" onclick="showView('admin')">← Voltar ao Painel</button>
     <div style="font-family:sans-serif;font-weight:800;font-size:20px;margin-bottom:20px;">👥 Gerenciar Técnicos</div>
 
-    <!-- Opções Extras -->
-    <div class="card" style="margin-bottom:20px;">
-      <div style="font-family:sans-serif;font-weight:700;font-size:14px;margin-bottom:12px;color:var(--accent);">⚙️ Opções extras (apenas Técnico/Atendimento)</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Aparecem na lista de aparelhos apenas para Renan/Elisson. Recebem 100% do valor.</div>
-      <div id="opts-lista" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;"></div>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-        <input id="opts-novo" class="input" style="max-width:200px;" placeholder="Nova opção..."/>
-        <button class="btn btn-accent btn-sm" onclick="adicionarOpt()">Adicionar</button>
-      </div>
-    </div>
 
-    <!-- Aparelhos por perfil -->
-    <div class="card" style="margin-bottom:20px;">
-      <div style="font-family:sans-serif;font-weight:700;font-size:14px;margin-bottom:12px;color:var(--accent);">📱 Gerenciar lista de Aparelhos</div>
-      <div style="margin-bottom:14px;">
-        <div style="font-size:12px;color:var(--muted);font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:.8px;">Todos os técnicos</div>
-        <div id="apar-all-lista" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;"></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <input id="apar-all-novo" class="input" style="max-width:180px;" placeholder="Novo aparelho..."/>
-          <button class="btn btn-accent btn-sm" onclick="adicionarApar('all')">Adicionar</button>
-        </div>
-      </div>
-      <div class="divider"></div>
-      <div>
-        <div style="font-size:12px;color:var(--muted);font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:.8px;">Apenas Técnico/Atendimento</div>
-        <div id="apar-atat-lista" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;"></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <input id="apar-atat-novo" class="input" style="max-width:180px;" placeholder="Novo aparelho..."/>
-          <button class="btn btn-accent btn-sm" onclick="adicionarApar('atat')">Adicionar</button>
-        </div>
-      </div>
-    </div>
 
     <div class="card" style="margin-bottom:20px;">
       <div style="font-family:sans-serif;font-weight:700;font-size:14px;margin-bottom:16px;color:var(--accent);">
@@ -565,6 +534,33 @@ td{padding:10px;border-bottom:1px solid var(--border);}
         Técnicos cadastrados (<span id="g-count">0</span>)
       </div>
       <div id="g-lista"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Editar Dados Técnico -->
+<div id="modal-tec-info" class="modal-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#000000bb;z-index:9999;overflow-y:auto;">
+  <div style="max-width:480px;margin:60px auto;padding:16px;">
+    <div class="card" style="position:relative;">
+      <div style="font-family:sans-serif;font-weight:700;font-size:15px;margin-bottom:18px;color:var(--accent);">✎ Editar dados do técnico</div>
+      <input type="hidden" id="modal-tec-id"/>
+      <div style="margin-bottom:14px;">
+        <label class="lbl">Nome completo</label>
+        <input id="modal-tec-nc" class="input" placeholder="Ex: João da Silva Souza"/>
+      </div>
+      <div style="margin-bottom:14px;">
+        <label class="lbl">E-mail</label>
+        <input id="modal-tec-em" class="input" type="email" placeholder="Ex: joao@email.com"/>
+      </div>
+      <div style="margin-bottom:18px;">
+        <label class="lbl">CPF</label>
+        <input id="modal-tec-cp" class="input" placeholder="Ex: 000.000.000-00"/>
+      </div>
+      <div id="modal-tec-ok" class="alert-ok hidden" style="margin-bottom:10px;">✓ Salvo!</div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-accent" onclick="salvarInfoTec()">Salvar</button>
+        <button class="btn btn-outline-muted" onclick="fecharModalTec()">Cancelar</button>
+      </div>
     </div>
   </div>
 </div>
@@ -744,6 +740,7 @@ const VIEWS = ["login","tec","admin","gerenciar","lancar"];
 function showView(v){
   VIEWS.forEach(x=>el("view-"+x).classList.add("hidden"));
   el("view-"+v).classList.remove("hidden");
+  // never hide modals
 }
 
 // ── Formatar valor monetário ─────────────────────────────────────────────────
@@ -837,19 +834,17 @@ function initTec(){
   renderTecLista();
 }
 
-async function editarMeusDados(){
-  const nc=prompt("Nome completo:",ME.nomecompleto||"");
-  if(nc===null)return;
-  const em=prompt("E-mail:",ME.email||"");
-  if(em===null)return;
-  const cp=prompt("CPF:",ME.cpf||"");
-  if(cp===null)return;
-  USERS=USERS.map(u=>u.id===ME.id?{...u,nomecompleto:nc.trim(),email:em.trim(),cpf:cp.trim()}:u);
-  ME={...ME,nomecompleto:nc.trim(),email:em.trim(),cpf:cp.trim()};
-  sessionStorage.setItem("toledo_me",JSON.stringify(ME));
-  saveUsers(USERS);
-  await dbSalvarUsuario(ME);
-  initTec();
+function editarMeusDados(){
+  document.getElementById("modal-tec-id").value=ME.id;
+  document.getElementById("modal-tec-nc").value=ME.nomecompleto||"";
+  document.getElementById("modal-tec-em").value=ME.email||"";
+  document.getElementById("modal-tec-cp").value=ME.cpf||"";
+  document.getElementById("modal-tec-ok").classList.add("hidden");
+  const mti=document.getElementById("modal-tec-info");
+  mti.classList.remove("hidden");
+  mti.style.setProperty("display","block","important");
+  // Override save to also update ME
+  window._editandoPropriosTec=true;
 }
 
 function meusSrvs(){
@@ -1165,6 +1160,7 @@ function renderTabela(){
       <td style="white-space:nowrap;font-weight:700;color:${cancelado?"var(--danger)":"var(--success)"};">${cancelado?"—":fmt(srv.maoDeObra)}</td>
       <td style="white-space:nowrap;color:var(--muted);">${tp>0?fmt(tp):"—"}</td>
       <td style="white-space:nowrap;font-size:11px;color:var(--muted);">${cancelado?"—":fmt(srv.maoDeObra-tp)}</td>
+      <td style="white-space:nowrap;font-weight:700;color:${receber<0?"var(--danger)":"var(--accent)"};">${fmt(receber)}</td>
       <td style="white-space:nowrap;">
         <button class="btn btn-outline-accent2 btn-sm" style="margin-right:4px;" onclick="abrirModalEdit('${srv.id}')">✎</button>
         <button class="btn btn-outline-danger btn-sm" onclick="excluirAdmin('${srv.id}')">✕</button>
@@ -1183,48 +1179,27 @@ async function excluirAdmin(id){
 
 function renderLiqReceber(){
   const [wI,wF]=weekRange();
-  const tbl=document.getElementById("tab-liq-receber"); if(!tbl)return;
-  const rows=tecs().map(t=>{
+  const wrap=document.getElementById("chart-dif-wrap"); if(!wrap)return;
+  const data=tecs().map((t,i)=>{
     const srvs=SERVICOS.filter(s=>s.tecId===t.id&&s.data>=wI&&s.data<=wF);
     const ativos=srvs.filter(s=>!s.cancelado);
     const profile=t.profile||"tec";
-    const conserto=ativos.reduce((a,s)=>a+s.maoDeObra,0);
-    const pcs=ativos.reduce((a,s)=>a+totalPecas(s),0);
-    const liq=conserto-pcs;
+    const liq=ativos.reduce((a,s)=>a+s.maoDeObra,0)-ativos.reduce((a,s)=>a+totalPecas(s),0);
     const receber=srvs.reduce((a,s)=>a+calcReceber(s,profile),0);
-    return{nome:t.name,conserto,pcs,liq,receber};
+    const dif=liq-receber;
+    return{nome:t.name, dif, color:BAR_COLORS[i%BAR_COLORS.length]};
   });
-  const totConserto=rows.reduce((a,r)=>a+r.conserto,0);
-  const totPcs=rows.reduce((a,r)=>a+r.pcs,0);
-  const totLiq=rows.reduce((a,r)=>a+r.liq,0);
-  const totReceber=rows.reduce((a,r)=>a+r.receber,0);
-  tbl.innerHTML=`
-    <thead><tr style="border-bottom:2px solid var(--border);">
-      <th style="text-align:left;padding:8px 10px;color:var(--muted);font-size:11px;font-weight:600;">Técnico</th>
-      <th style="text-align:right;padding:8px 10px;color:var(--muted);font-size:11px;font-weight:600;">Conserto</th>
-      <th style="text-align:right;padding:8px 10px;color:var(--muted);font-size:11px;font-weight:600;">Peças</th>
-      <th style="text-align:right;padding:8px 10px;color:var(--muted);font-size:11px;font-weight:600;">Líquido</th>
-      <th style="text-align:right;padding:8px 10px;color:var(--muted);font-size:11px;font-weight:600;">A Receber</th>
-      <th style="text-align:right;padding:8px 10px;color:var(--muted);font-size:11px;font-weight:600;">Diferença</th>
-    </tr></thead>
-    <tbody>
-      ${rows.map(r=>`<tr style="border-bottom:1px solid var(--border);">
-        <td style="padding:9px 10px;font-weight:700;">${r.nome}</td>
-        <td style="padding:9px 10px;text-align:right;color:var(--success);">${fmt(r.conserto)}</td>
-        <td style="padding:9px 10px;text-align:right;color:var(--muted);">${fmt(r.pcs)}</td>
-        <td style="padding:9px 10px;text-align:right;color:var(--accent2);">${fmt(r.liq)}</td>
-        <td style="padding:9px 10px;text-align:right;color:var(--accent);font-weight:700;">${fmt(r.receber)}</td>
-        <td style="padding:9px 10px;text-align:right;color:${r.liq-r.receber>=0?"var(--success)":"var(--danger)"};">${fmt(r.liq-r.receber)}</td>
-      </tr>`).join("")}
-      <tr style="border-top:2px solid var(--border);font-weight:700;background:var(--surface);">
-        <td style="padding:9px 10px;">Total</td>
-        <td style="padding:9px 10px;text-align:right;color:var(--success);">${fmt(totConserto)}</td>
-        <td style="padding:9px 10px;text-align:right;color:var(--muted);">${fmt(totPcs)}</td>
-        <td style="padding:9px 10px;text-align:right;color:var(--accent2);">${fmt(totLiq)}</td>
-        <td style="padding:9px 10px;text-align:right;color:var(--accent);">${fmt(totReceber)}</td>
-        <td style="padding:9px 10px;text-align:right;color:${totLiq-totReceber>=0?"var(--success)":"var(--danger)"};">${fmt(totLiq-totReceber)}</td>
-      </tr>
-    </tbody>`;
+  const maxVal=Math.max(...data.map(d=>Math.abs(d.dif)),1);
+  wrap.style.cssText="display:flex;align-items:flex-end;gap:10px;height:150px;padding:0 8px;";
+  wrap.innerHTML=data.map(d=>{
+    const h=Math.max(8,Math.round((Math.abs(d.dif)/maxVal)*120));
+    const cor=d.dif>=0?d.color:"var(--danger)";
+    return `<div class="bar-col">
+      <div style="font-size:10px;font-weight:700;color:${cor};">${fmt(d.dif)}</div>
+      <div style="width:100%;height:${h}px;background:${cor};border-radius:6px 6px 0 0;"></div>
+      <div class="bar-label">${d.nome}</div>
+    </div>`;
+  }).join("");
 }
 
 function renderChartReceber(){
@@ -1494,7 +1469,7 @@ function showView(v){
   const target=el("view-"+v); if(!target)return;
   target.classList.remove("hidden");
   target.style.display=(v==="login")?"flex":"block";
-  if(v==="gerenciar"){renderGLista();renderOpts();renderAparListas();}
+  if(v==="gerenciar"){renderGLista();}
   if(v==="admin"){initAdmin();}
   if(v==="lancar"){initLancar();}
 }
@@ -1559,28 +1534,62 @@ async function excluirTecnico(id){
   renderGLista(); renderFiltroTec();
 }
 
-async function editarInfoTec(id){
+function editarInfoTec(id){
   const t=USERS.find(u=>u.id===id); if(!t)return;
-  const nc=prompt("Nome completo:",t.nomecompleto||"");
-  if(nc===null)return;
-  const em=prompt("E-mail:",t.email||"");
-  if(em===null)return;
-  const cp=prompt("CPF:",t.cpf||"");
-  if(cp===null)return;
-  USERS=USERS.map(u=>u.id===id?{...u,nomecompleto:nc.trim(),email:em.trim(),cpf:cp.trim()}:u);
+  document.getElementById("modal-tec-id").value=id;
+  document.getElementById("modal-tec-nc").value=t.nomecompleto||"";
+  document.getElementById("modal-tec-em").value=t.email||"";
+  document.getElementById("modal-tec-cp").value=t.cpf||"";
+  document.getElementById("modal-tec-ok").classList.add("hidden");
+  const mti=document.getElementById("modal-tec-info");
+  mti.classList.remove("hidden");
+  mti.style.setProperty("display","block","important");
+}
+function fecharModalTec(){
+  const mti=document.getElementById("modal-tec-info");
+  mti.style.setProperty("display","none","important");
+}
+async function salvarInfoTec(){
+  const id=document.getElementById("modal-tec-id").value;
+  const nc=document.getElementById("modal-tec-nc").value.trim();
+  const em=document.getElementById("modal-tec-em").value.trim();
+  const cp=document.getElementById("modal-tec-cp").value.trim();
+  USERS=USERS.map(u=>u.id===id?{...u,nomecompleto:nc,email:em,cpf:cp}:u);
   saveUsers(USERS);
-  await dbSalvarUsuario(USERS.find(u=>u.id===id));
-  renderGLista();
+  const u=USERS.find(u=>u.id===id);
+  await dbSalvarUsuario(u);
+  if(ME&&ME.id===id){
+    ME={...ME,nomecompleto:nc,email:em,cpf:cp};
+    sessionStorage.setItem("toledo_me",JSON.stringify(ME));
+  }
+  const ok=document.getElementById("modal-tec-ok");
+  ok.classList.remove("hidden");
+  setTimeout(()=>{
+    ok.classList.add("hidden");
+    fecharModalTec();
+    window._editandoPropriosTec=false;
+    if(ME&&ME.id===id) initTec();
+    else renderGLista();
+  },1500);
 }
 
-async function alterarSenha(id){
+function alterarSenha(id){
   const t=USERS.find(u=>u.id===id); if(!t)return;
-  const nova=prompt(`Nova senha para ${t.name}:`);
+  document.getElementById("modal-tec-id").value=id;
+  // reuse modal but just for password
+  document.getElementById("modal-tec-nc").value=t.nomecompleto||"";
+  document.getElementById("modal-tec-em").value=t.email||"";
+  document.getElementById("modal-tec-cp").value=t.cpf||"";
+  // show a simpler password prompt inline
+  const nova=window.prompt("Nova senha para "+t.name+":");
   if(!nova||!nova.trim())return;
-  USERS=USERS.map(u=>u.id===id?{...u,password:nova.trim()}:u);
+  _salvarSenha(id, nova.trim());
+}
+async function _salvarSenha(id, nova){
+  USERS=USERS.map(u=>u.id===id?{...u,password:nova}:u);
   saveUsers(USERS);
   await dbSalvarUsuario(USERS.find(u=>u.id===id));
-  alert("Senha alterada com sucesso!");
+  alert("Senha alterada!");
 }
 
 // ── Exportar Excel ────────────────────────────────────────────────────────────
