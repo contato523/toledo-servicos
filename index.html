@@ -481,7 +481,7 @@ td{padding:10px;border-bottom:1px solid var(--border);}
       <div style="font-family:sans-serif;font-weight:700;font-size:14px;margin-bottom:16px;color:var(--accent);">📱 Gerenciar Aparelhos</div>
 
       <div style="margin-bottom:16px;">
-        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;">Todos os técnicos</div>
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;">Técnico (Davi, Nene)</div>
         <div id="apar-all-lista" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;"></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
           <input id="apar-all-novo" class="input" style="max-width:180px;" placeholder="Novo aparelho..."/>
@@ -492,12 +492,17 @@ td{padding:10px;border-bottom:1px solid var(--border);}
       <div class="divider"></div>
 
       <div style="margin-top:16px;">
-        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;">Apenas Técnico/Atendimento</div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Esses itens recebem sempre 100% do valor, sem divisão.</div>
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;">Técnico/Atendimento (Renan, Elisson)</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Aparelhos normais + opções extras (marcadas com ★ recebem 100% do valor).</div>
         <div id="apar-atat-lista" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;"></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <input id="apar-atat-novo" class="input" style="max-width:180px;" placeholder="Nova opção..."/>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+          <input id="apar-atat-novo" class="input" style="max-width:180px;" placeholder="Novo aparelho..."/>
           <button class="btn btn-accent btn-sm" onclick="adicionarApar('atat')">Adicionar</button>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">★ Adicionar opção com 100% do valor:</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <input id="opts-novo" class="input" style="max-width:180px;" placeholder="Ex: Atendimento..."/>
+          <button class="btn btn-outline-accent btn-sm" onclick="adicionarOpt()">Adicionar ★</button>
         </div>
       </div>
     </div>
@@ -599,6 +604,54 @@ td{padding:10px;border-bottom:1px solid var(--border);}
   </div>
 </div>
 
+<!-- Modal Alterar Senha Técnico -->
+<div id="modal-senha-tec" class="modal-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#000000bb;z-index:9999;overflow-y:auto;">
+  <div style="max-width:400px;margin:80px auto;padding:16px;">
+    <div class="card">
+      <div style="font-family:sans-serif;font-weight:700;font-size:15px;margin-bottom:6px;color:var(--accent);">🔑 Alterar Senha</div>
+      <div id="modal-senha-tec-nome" style="font-size:13px;color:var(--muted);margin-bottom:18px;"></div>
+      <input type="hidden" id="modal-senha-tec-id"/>
+      <div style="margin-bottom:18px;">
+        <label class="lbl">Nova senha</label>
+        <input id="modal-senha-tec-nova" class="input" type="password" placeholder="Digite a nova senha"/>
+      </div>
+      <div id="modal-senha-tec-err" class="alert-err" style="margin-bottom:10px;display:none;"></div>
+      <div id="modal-senha-tec-ok" class="alert-ok hidden" style="margin-bottom:10px;">✓ Senha alterada!</div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-accent" onclick="confirmarAlterarSenha()">Salvar</button>
+        <button class="btn btn-outline-muted" onclick="document.getElementById('modal-senha-tec').style.setProperty('display','none','important')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Alterar Senha Gestor -->
+<div id="modal-senha-gestor" class="modal-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#000000bb;z-index:9999;overflow-y:auto;">
+  <div style="max-width:400px;margin:80px auto;padding:16px;">
+    <div class="card">
+      <div style="font-family:sans-serif;font-weight:700;font-size:15px;margin-bottom:18px;color:var(--accent);">🔑 Alterar Minha Senha</div>
+      <div style="margin-bottom:14px;">
+        <label class="lbl">Senha atual</label>
+        <input id="sg-atual" class="input" type="password" placeholder="Digite a senha atual"/>
+      </div>
+      <div style="margin-bottom:14px;">
+        <label class="lbl">Nova senha</label>
+        <input id="sg-nova" class="input" type="password" placeholder="Digite a nova senha"/>
+      </div>
+      <div style="margin-bottom:18px;">
+        <label class="lbl">Confirmar nova senha</label>
+        <input id="sg-conf" class="input" type="password" placeholder="Repita a nova senha"/>
+      </div>
+      <div id="sg-err" class="alert-err" style="margin-bottom:10px;display:none;"></div>
+      <div id="sg-ok" class="alert-ok hidden" style="margin-bottom:10px;">✓ Senha alterada com sucesso!</div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-accent" onclick="salvarSenhaGestor()">Salvar</button>
+        <button class="btn btn-outline-muted" onclick="fecharModalSenhaGestor()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 // ── Supabase ──────────────────────────────────────────────────────────────────
 const SB_URL = "https://ktfltkqtecbhdjatpehu.supabase.co";
@@ -607,9 +660,10 @@ const SB_KEY = "sb_publishable_I9yy4bV2HiwcWpQNhWw4uA_pQLhu2h-";
 async function sbFetch(path, opts={}){
   const headers = {"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Content-Type":"application/json"};
   if(opts.prefer) headers["Prefer"] = opts.prefer;
+  if(opts.headers) Object.assign(headers, opts.headers);
   const res = await fetch(SB_URL+path, {method:opts.method||"GET", headers, body:opts.body||undefined});
-  if(!res.ok){console.error("Supabase:",res.status,await res.text());return null;}
-  const txt = await res.text(); return txt?JSON.parse(txt):null;
+  if(!res.ok){console.error("Supabase:",res.status,await res.text());return {__error:true,status:res.status};}
+  const txt = await res.text(); return txt?JSON.parse(txt):{__ok:true};
 }
 
 async function dbCarregarServicos(){
@@ -719,12 +773,13 @@ async function dbCarregarUsuarios(){
 }
 
 async function dbSalvarUsuario(u){
-  const row={id:u.id, nome:u.name, nomecompleto:u.nomecompleto||"",
+  if(!u||!u.id) return;
+  const row={id:u.id, nome:u.name||u.id, nomecompleto:u.nomecompleto||"",
     email:u.email||"", cpf:u.cpf||"", profile:u.profile||"tec", password:u.password||""};
-  // Upsert
-  await sbFetch("/rest/v1/usuarios?on_conflict=id",{
-    method:"POST", prefer:"return=minimal",
-    headers:{"Prefer":"resolution=merge-duplicates,return=minimal"},
+  // PATCH to update — works even if nomecompleto/email/cpf are the only changes
+  await sbFetch("/rest/v1/usuarios?id=eq."+u.id,{
+    method:"PATCH",
+    prefer:"return=minimal",
     body:JSON.stringify(row)
   });
 }
@@ -1336,9 +1391,12 @@ function renderAparListas(){
   const wa=document.getElementById("apar-all-lista");
   const wb=document.getElementById("apar-atat-lista");
   if(!wa||!wb)return;
-  const chip=(o,tipo,i)=>`<span style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;display:inline-flex;align-items:center;gap:6px;">${o}<button onclick="removerApar('${tipo}',${i})" style="background:none;border:none;cursor:pointer;color:var(--danger);font-size:14px;line-height:1;">×</button></span>`;
-  wa.innerHTML=APARELHOS_CFG.all.map((o,i)=>chip(o,'all',i)).join("");
-  wb.innerHTML=APARELHOS_CFG.atat.map((o,i)=>chip(o,'atat',i)).join("");
+  const chip=(o,tipo,i,extra)=>`<span style="background:var(--surface);border:1px solid ${extra?"var(--accent)":"var(--border)"};border-radius:20px;padding:4px 12px;font-size:12px;display:inline-flex;align-items:center;gap:6px;">${extra?"★ ":""}${o}<button onclick="${extra?`removerOpt(${i})`:`removerApar('${tipo}',${i})`}" style="background:none;border:none;cursor:pointer;color:var(--danger);font-size:14px;line-height:1;">×</button></span>`;
+  wa.innerHTML=APARELHOS_CFG.all.map((o,i)=>chip(o,'all',i,false)).join("");
+  // atat = aparelhos normais + opcoes extras (marcadas)
+  const atat_chips=APARELHOS_CFG.atat.map((o,i)=>chip(o,'atat',i,false)).join("");
+  const extras_chips=OPCOES_EXTRAS.map((o,i)=>chip(o,'opts',i,true)).join("");
+  wb.innerHTML=atat_chips+(extras_chips?`<div style="width:100%;height:6px;"></div>${extras_chips}`:"");
 }
 function adicionarApar(tipo){
   const inputId=tipo==="all"?"apar-all-novo":"apar-atat-novo";
@@ -1464,19 +1522,36 @@ async function salvarLancar(){
 
 // ── Senha do Gestor ───────────────────────────────────────────────────────────
 function editarSenhaGestor(){
-  const atual=prompt("Senha atual:");
-  if(!atual)return;
+  document.getElementById("sg-atual").value="";
+  document.getElementById("sg-nova").value="";
+  document.getElementById("sg-conf").value="";
+  document.getElementById("sg-err").style.display="none";
+  document.getElementById("sg-ok").classList.add("hidden");
+  const m=document.getElementById("modal-senha-gestor");
+  m.style.setProperty("display","block","important");
+}
+function fecharModalSenhaGestor(){
+  document.getElementById("modal-senha-gestor").style.setProperty("display","none","important");
+}
+async function salvarSenhaGestor(){
+  const atual=document.getElementById("sg-atual").value.trim();
+  const nova=document.getElementById("sg-nova").value.trim();
+  const conf=document.getElementById("sg-conf").value.trim();
+  const err=document.getElementById("sg-err");
   const admin=USERS.find(u=>u.id===ME.id);
-  if(!admin||admin.password!==atual.trim()){alert("Senha atual incorreta.");return;}
-  const nova=prompt("Nova senha:");
-  if(!nova||!nova.trim()){alert("Senha não pode ser vazia.");return;}
-  const conf=prompt("Confirme a nova senha:");
-  if(nova.trim()!==conf.trim()){alert("As senhas não coincidem.");return;}
-  USERS=USERS.map(u=>u.id===ME.id?{...u,password:nova.trim()}:u);
-  ME={...ME,password:nova.trim()};
+  if(!admin||admin.password!==atual){
+    err.textContent="Senha atual incorreta."; err.style.display="block"; return;
+  }
+  if(!nova){err.textContent="Nova senha não pode ser vazia."; err.style.display="block"; return;}
+  if(nova!==conf){err.textContent="As senhas não coincidem."; err.style.display="block"; return;}
+  err.style.display="none";
+  USERS=USERS.map(u=>u.id===ME.id?{...u,password:nova}:u);
+  ME={...ME,password:nova};
   sessionStorage.setItem("toledo_me",JSON.stringify(ME));
   saveUsers(USERS);
-  alert("Senha alterada com sucesso!");
+  await dbSalvarUsuario(ME);
+  document.getElementById("sg-ok").classList.remove("hidden");
+  setTimeout(()=>fecharModalSenhaGestor(),1500);
 }
 
 // ── Gerenciar Técnicos ────────────────────────────────────────────────────────
@@ -1595,21 +1670,27 @@ async function salvarInfoTec(){
 
 function alterarSenha(id){
   const t=USERS.find(u=>u.id===id); if(!t)return;
-  document.getElementById("modal-tec-id").value=id;
-  // reuse modal but just for password
-  document.getElementById("modal-tec-nc").value=t.nomecompleto||"";
-  document.getElementById("modal-tec-em").value=t.email||"";
-  document.getElementById("modal-tec-cp").value=t.cpf||"";
-  // show a simpler password prompt inline
-  const nova=window.prompt("Nova senha para "+t.name+":");
-  if(!nova||!nova.trim())return;
-  _salvarSenha(id, nova.trim());
+  document.getElementById("modal-senha-tec-id").value=id;
+  document.getElementById("modal-senha-tec-nome").textContent="Técnico: "+t.name;
+  document.getElementById("modal-senha-tec-nova").value="";
+  document.getElementById("modal-senha-tec-err").style.display="none";
+  document.getElementById("modal-senha-tec-ok").classList.add("hidden");
+  document.getElementById("modal-senha-tec").style.setProperty("display","block","important");
 }
-async function _salvarSenha(id, nova){
+async function confirmarAlterarSenha(){
+  const id=document.getElementById("modal-senha-tec-id").value;
+  const nova=document.getElementById("modal-senha-tec-nova").value.trim();
+  const err=document.getElementById("modal-senha-tec-err");
+  if(!nova){err.textContent="Senha não pode ser vazia.";err.style.display="block";return;}
+  err.style.display="none";
   USERS=USERS.map(u=>u.id===id?{...u,password:nova}:u);
   saveUsers(USERS);
   await dbSalvarUsuario(USERS.find(u=>u.id===id));
-  alert("Senha alterada!");
+  document.getElementById("modal-senha-tec-ok").classList.remove("hidden");
+  setTimeout(()=>{
+    document.getElementById("modal-senha-tec").style.setProperty("display","none","important");
+    renderGLista();
+  },1500);
 }
 
 // ── Exportar Excel ────────────────────────────────────────────────────────────
