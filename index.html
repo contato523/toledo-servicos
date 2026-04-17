@@ -1096,8 +1096,10 @@ function renderTecLista(){
       </div>
     </div>`;
   }).join("");
+  const qtdPecasTec=filtradosAtivos.reduce((a,s)=>{if(s.peca1nome)a++;if(s.peca2nome)a++;if(s.peca3nome)a++;return a;},0);
   const totalFooter=`<div style="border-top:2px solid var(--border);margin-top:12px;padding-top:12px;display:flex;gap:16px;flex-wrap:wrap;align-items:center;background:var(--surface);border-radius:0 0 8px 8px;padding:12px 16px;">
     <span style="font-size:12px;color:var(--muted);">📦 ${filtradosAtivos.length} aparelho${filtradosAtivos.length!==1?"s":""} consertado${filtradosAtivos.length!==1?"s":""}</span>
+    <span style="font-size:12px;color:var(--muted);">🔩 ${qtdPecasTec} peça${qtdPecasTec!==1?"s":""} usada${qtdPecasTec!==1?"s":""}</span>
     <span style="font-size:13px;font-weight:700;color:var(--accent);">💰 Total a receber: ${fmt(totalReceberLista)}</span>
   </div>`;
   el("lista-servicos").innerHTML=listaHtml+totalFooter;
@@ -1403,9 +1405,11 @@ function renderTabela(){
     return a+calcReceber(s,profile);
   },0);
   const filtradosAtivosAdm=filtrados.filter(s=>!s.cancelado);
+  const qtdPecasAdm=filtradosAtivosAdm.reduce((a,s)=>{if(s.peca1nome)a++;if(s.peca2nome)a++;if(s.peca3nome)a++;return a;},0);
   el("tab-totais").innerHTML=`Valor do Conserto: <span style="color:var(--success);font-weight:700;">${fmt(mo)}</span>
     &nbsp;Peças: <span style="font-weight:700;">${fmt(pcs)}</span>
     &nbsp;📦 ${filtradosAtivosAdm.length} aparelhos consertados
+    &nbsp;🔩 ${qtdPecasAdm} peça${qtdPecasAdm!==1?"s":""} usada${qtdPecasAdm!==1?"s":""}
     &nbsp;<span style="color:var(--accent);font-weight:700;">💰 A Receber: ${fmt(totalRec)}</span>
 `;
 
