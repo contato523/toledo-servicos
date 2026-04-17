@@ -158,7 +158,7 @@ td{padding:10px;border-bottom:1px solid var(--border);}
         <div style="font-family:sans-serif;font-weight:800;font-size:18px;" id="tec-nome"></div>
         <div id="tec-info-extra" style="margin-top:4px;"></div>
         <div style="color:var(--muted);font-size:13px;margin-top:6px;">
-          Esta semana: <span id="tec-semana" style="color:var(--success);font-weight:700;"></span>
+          <span id="tec-semana-lbl" style="color:var(--muted);font-size:12px;"></span> <span id="tec-semana" style="color:var(--success);font-weight:700;"></span>
           <span id="tec-total-span" style="color:var(--muted);"></span>
         </div>
       </div>
@@ -270,8 +270,12 @@ td{padding:10px;border-bottom:1px solid var(--border);}
 
     <!-- Lista dos serviços -->
     <div class="card">
-      <div style="font-family:sans-serif;font-weight:700;font-size:15px;margin-bottom:16px;">
+      <div style="font-family:sans-serif;font-weight:700;font-size:15px;margin-bottom:12px;">
         Meus serviços (<span id="tec-count">0</span>)
+      </div>
+      <div style="margin-bottom:14px;display:flex;gap:8px;align-items:center;">
+        <input id="tec-busca-os" class="input" style="max-width:220px;" placeholder="🔍 Buscar por Nº OS..." oninput="renderTecLista()"/>
+        <button class="btn btn-outline-muted btn-sm" onclick="el('tec-busca-os').value='';renderTecLista()">Limpar</button>
       </div>
       <div id="lista-servicos">
         <div style="color:var(--muted);font-size:13px;text-align:center;padding:24px 0;">Nenhum serviço registrado ainda.</div>
@@ -290,6 +294,7 @@ td{padding:10px;border-bottom:1px solid var(--border);}
       <button class="btn btn-outline-accent" onclick="showView('lancar')">➕ Lançar Serviço</button>
       <button class="btn btn-outline-muted" onclick="editarSenhaGestor()">🔑 Minha Senha</button>
       <button class="btn btn-outline-success" onclick="exportarExcel()">⬇️ Exportar Excel</button>
+      <button class="btn btn-outline-accent2" onclick="abrirConfiguracoes()">⚙️ Configurações</button>
     </div>
 
     <!-- KPIs -->
@@ -298,7 +303,7 @@ td{padding:10px;border-bottom:1px solid var(--border);}
     <!-- Gráfico -->
     <div class="card" style="margin-bottom:24px;">
       <div style="font-family:sans-serif;font-weight:700;font-size:14px;margin-bottom:14px;">
-        📊 Produção por Técnico — Semana Atual (barra clara = conserto | barra escura = líquido)
+        📊 Produção por Técnico — <span id="chart-label-periodo">Semana Atual</span> (barra clara = conserto | barra escura = líquido)
       </div>
       <div id="chart-wrap"></div>
     </div>
@@ -306,7 +311,7 @@ td{padding:10px;border-bottom:1px solid var(--border);}
     <!-- Gráfico A Receber -->
     <div class="card" style="margin-bottom:24px;">
       <div style="font-family:sans-serif;font-weight:700;font-size:14px;margin-bottom:14px;">
-        💰 A Receber por Técnico — Semana Atual
+        💰 A Receber por Técnico — <span id="chart-receber-label">Semana Atual</span>
       </div>
       <div id="chart-receber-wrap"></div>
     </div>
@@ -358,8 +363,14 @@ td{padding:10px;border-bottom:1px solid var(--border);}
 
     <!-- Gráfico Diferença Líquido vs A Receber -->
     <div class="card" style="margin-bottom:24px;">
-      <div style="font-family:sans-serif;font-weight:700;font-size:14px;margin-bottom:14px;">📊 Diferença Líquido − A Receber — Semana Atual</div>
+      <div style="font-family:sans-serif;font-weight:700;font-size:14px;margin-bottom:14px;">📊 Diferença Líquido − A Receber — <span id="chart-dif-label">Semana Atual</span></div>
       <div id="chart-dif-wrap" style="display:flex;align-items:flex-end;gap:10px;height:150px;padding:0 8px;"></div>
+    </div>
+
+    <!-- Gráfico Aparelhos Consertados por Período -->
+    <div class="card" style="margin-bottom:24px;">
+      <div style="font-family:sans-serif;font-weight:700;font-size:14px;margin-bottom:14px;">📦 Aparelhos Consertados por Tipo — <span id="chart-apar-label">Semana Atual</span></div>
+      <div id="chart-apar-wrap" style="display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap;min-height:80px;"></div>
     </div>
 
     <!-- Filtros -->
@@ -383,6 +394,10 @@ td{padding:10px;border-bottom:1px solid var(--border);}
         <div>
           <label class="lbl">Data fim</label>
           <input type="date" id="fil-fim" class="input" onchange="renderTabela()"/>
+        </div>
+        <div>
+          <label class="lbl">Buscar por Nº OS</label>
+          <input id="fil-os" class="input" placeholder="Ex: 1042" oninput="renderTabela()"/>
         </div>
       </div>
     </div>
@@ -476,37 +491,6 @@ td{padding:10px;border-bottom:1px solid var(--border);}
 
 
 
-    <!-- Gerenciar Aparelhos -->
-    <div class="card" style="margin-bottom:20px;">
-      <div style="font-family:sans-serif;font-weight:700;font-size:14px;margin-bottom:16px;color:var(--accent);">📱 Gerenciar Aparelhos</div>
-
-      <div style="margin-bottom:16px;">
-        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;">Técnico (Davi, Nene)</div>
-        <div id="apar-all-lista" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;"></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <input id="apar-all-novo" class="input" style="max-width:180px;" placeholder="Novo aparelho..."/>
-          <button class="btn btn-accent btn-sm" onclick="adicionarApar('all')">Adicionar</button>
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
-      <div style="margin-top:16px;">
-        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;">Técnico/Atendimento (Renan, Elisson)</div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Aparelhos normais + opções extras (marcadas com ★ recebem 100% do valor).</div>
-        <div id="apar-atat-lista" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;"></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
-          <input id="apar-atat-novo" class="input" style="max-width:180px;" placeholder="Novo aparelho..."/>
-          <button class="btn btn-accent btn-sm" onclick="adicionarApar('atat')">Adicionar</button>
-        </div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">★ Adicionar opção com 100% do valor:</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <input id="opts-novo" class="input" style="max-width:180px;" placeholder="Ex: Atendimento..."/>
-          <button class="btn btn-outline-accent btn-sm" onclick="adicionarOpt()">Adicionar ★</button>
-        </div>
-      </div>
-    </div>
-
     <div class="card" style="margin-bottom:20px;">
       <div style="font-family:sans-serif;font-weight:700;font-size:14px;margin-bottom:16px;color:var(--accent);">
         ➕ Adicionar Novo Técnico
@@ -519,9 +503,9 @@ td{padding:10px;border-bottom:1px solid var(--border);}
         <label class="lbl">Nome completo</label>
         <input id="g-nomecompleto" class="input" placeholder="Ex: João da Silva Souza"/>
       </div>
-      <div style="margin-top:14px;" class="grid2">
-        <div><label class="lbl">E-mail</label><input id="g-email" class="input" type="email" placeholder="Ex: joao@email.com"/></div>
-        <div><label class="lbl">CPF</label><input id="g-cpf" class="input" placeholder="Ex: 000.000.000-00"/></div>
+      <div style="margin-top:14px;">
+        <label class="lbl">E-mail</label>
+        <input id="g-email" class="input" type="email" placeholder="Ex: joao@email.com"/>
       </div>
       <div style="margin-top:14px;">
         <label class="lbl">Perfil</label>
@@ -548,9 +532,9 @@ td{padding:10px;border-bottom:1px solid var(--border);}
 
     <!-- Gerenciar lista de Aparelhos -->
     <div class="card" style="margin-bottom:20px;">
-      <div style="font-family:sans-serif;font-weight:700;font-size:14px;margin-bottom:12px;color:var(--accent);">📱 Gerenciar lista de Aparelhos</div>
+      <div style="font-family:sans-serif;font-weight:700;font-size:14px;margin-bottom:16px;color:var(--accent);">📱 Gerenciar Aparelhos</div>
       <div style="margin-bottom:16px;">
-        <div style="font-size:12px;color:var(--muted);font-weight:600;margin-bottom:10px;text-transform:uppercase;letter-spacing:.8px;">Todos os técnicos</div>
+        <div style="font-size:12px;color:var(--muted);font-weight:600;margin-bottom:10px;text-transform:uppercase;letter-spacing:.8px;">Todos os Técnicos</div>
         <div id="apar-all-lista" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;"></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
           <input id="apar-all-novo" class="input" style="max-width:180px;" placeholder="Novo aparelho..."/>
@@ -559,7 +543,8 @@ td{padding:10px;border-bottom:1px solid var(--border);}
       </div>
       <div class="divider"></div>
       <div style="margin-top:16px;">
-        <div style="font-size:12px;color:var(--muted);font-weight:600;margin-bottom:10px;text-transform:uppercase;letter-spacing:.8px;">Apenas Técnico/Atendimento</div>
+        <div style="font-size:12px;color:var(--muted);font-weight:600;margin-bottom:4px;text-transform:uppercase;letter-spacing:.8px;">Apenas Técnico/Atendimento</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Aparelhos extras visíveis só para perfil Técnico/Atendimento.</div>
         <div id="apar-atat-lista" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;"></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
           <input id="apar-atat-novo" class="input" style="max-width:180px;" placeholder="Novo aparelho..."/>
@@ -587,13 +572,9 @@ td{padding:10px;border-bottom:1px solid var(--border);}
         <label class="lbl">Nome completo</label>
         <input id="modal-tec-nc" class="input" placeholder="Ex: João da Silva Souza"/>
       </div>
-      <div style="margin-bottom:14px;">
+      <div style="margin-bottom:18px;">
         <label class="lbl">E-mail</label>
         <input id="modal-tec-em" class="input" type="email" placeholder="Ex: joao@email.com"/>
-      </div>
-      <div style="margin-bottom:18px;">
-        <label class="lbl">CPF</label>
-        <input id="modal-tec-cp" class="input" placeholder="Ex: 000.000.000-00"/>
       </div>
       <div id="modal-tec-ok" class="alert-ok hidden" style="margin-bottom:10px;">✓ Salvo!</div>
       <div style="display:flex;gap:10px;">
@@ -652,13 +633,40 @@ td{padding:10px;border-bottom:1px solid var(--border);}
   </div>
 </div>
 
+<!-- Modal Configurações (ISS) -->
+<div id="modal-config" class="modal-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#000000bb;z-index:9999;overflow-y:auto;">
+  <div style="max-width:420px;margin:80px auto;padding:16px;">
+    <div class="card">
+      <div style="font-family:sans-serif;font-weight:700;font-size:15px;margin-bottom:18px;color:var(--accent);">⚙️ Configurações do Sistema</div>
+      <div style="margin-bottom:18px;">
+        <label class="lbl">Alíquota ISS / NFS (%) — atual: <span id="iss-atual-label" style="color:var(--accent);"></span></label>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:6px;">
+          <input id="config-iss" class="input" type="number" min="0" max="100" step="0.1" style="max-width:120px;" placeholder="Ex: 6"/>
+          <span style="font-size:13px;color:var(--muted);">%</span>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:6px;">Valor padrão: 6%. Afeta cálculo "Valor NFS" para técnicos do perfil <em>Técnico</em>.</div>
+      </div>
+      <div id="config-ok" class="alert-ok hidden" style="margin-bottom:10px;">✓ Salvo!</div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-accent" onclick="salvarConfig()">Salvar</button>
+        <button class="btn btn-outline-muted" onclick="fecharConfig()">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 // ── Supabase ──────────────────────────────────────────────────────────────────
 const SB_URL = "https://ktfltkqtecbhdjatpehu.supabase.co";
 const SB_KEY = "sb_publishable_I9yy4bV2HiwcWpQNhWw4uA_pQLhu2h-";
 
 async function sbFetch(path, opts={}){
-  const headers = {"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Content-Type":"application/json"};
+  const headers = {
+    "apikey": SB_KEY,
+    "Authorization": "Bearer "+SB_KEY,
+    "Content-Type": "application/json",
+    "X-Client-Info": "toledo-app/1.0"
+  };
   if(opts.prefer) headers["Prefer"] = opts.prefer;
   if(opts.headers) Object.assign(headers, opts.headers);
   const res = await fetch(SB_URL+path, {method:opts.method||"GET", headers, body:opts.body||undefined});
@@ -676,7 +684,8 @@ async function dbCarregarServicos(){
     peca1nome:r.peca1nome||"", peca1valor:Number(r.peca1valor)||0,
     peca2nome:r.peca2nome||"", peca2valor:Number(r.peca2valor)||0,
     peca3nome:r.peca3nome||"", peca3valor:Number(r.peca3valor)||0,
-    obs:r.obs||"", dataConserto:r.data_conserto||"", cancelado:r.cancelado||false, criadoEm:r.criado_em||Date.now()
+    obs:r.obs||"", dataConserto:r.data_conserto||"", cancelado:r.cancelado||false, criadoEm:r.criado_em||Date.now(),
+    issPercent: r.iss_percent!=null ? Number(r.iss_percent) : null
   }));
 }
 
@@ -686,7 +695,9 @@ async function dbSalvar(entry){
     peca1nome:entry.peca1nome,peca1valor:entry.peca1valor,
     peca2nome:entry.peca2nome,peca2valor:entry.peca2valor,
     peca3nome:entry.peca3nome,peca3valor:entry.peca3valor,
-    obs:entry.obs,data_conserto:entry.dataConserto||"",cancelado:entry.cancelado||false,criado_em:entry.criadoEm};
+    obs:entry.obs,data_conserto:entry.dataConserto||"",cancelado:entry.cancelado||false,criado_em:entry.criadoEm,
+    iss_percent: entry.issPercent != null ? entry.issPercent : ISS_PERCENT
+  };
   if(entry._dbId){
     await sbFetch("/rest/v1/servicos?id=eq."+entry._dbId,{method:"PATCH",prefer:"return=minimal",body:JSON.stringify(row)});
     return entry._dbId;
@@ -705,6 +716,10 @@ const SK_U = "toledo_users_v1";
 const SK_OPTS = "toledo_opts_v1";
 const OPTS_DEFAULT = ["Atendimento","Extra","Gorjeta"];
 const SK_APAR = "toledo_apar_v1";
+const SK_ISS = "toledo_iss_v1";
+function loadIss(){try{const r=localStorage.getItem(SK_ISS);return r?Number(r):6;}catch{return 6;}}
+function saveIss(v){try{localStorage.setItem(SK_ISS,String(v));}catch{}}
+let ISS_PERCENT = loadIss();
 const APAR_DEFAULT_ALL = ["TV","Celular","Notebook","Tablet","Monitor","Micro-ondas","Som/Home Theater","Videogame","Venda","Outro"];
 const APAR_DEFAULT_ATAT = ["TV","Celular","Notebook","Tablet","Monitor","Micro-ondas","Som/Home Theater","Videogame","Venda","Outro"];
 function loadApar(){try{const r=localStorage.getItem(SK_APAR);if(!r)return{all:[...APAR_DEFAULT_ALL],atat:[...APAR_DEFAULT_ATAT]};return JSON.parse(r);}catch{return{all:[...APAR_DEFAULT_ALL],atat:[...APAR_DEFAULT_ATAT]};}}
@@ -726,6 +741,7 @@ function calcReceber(srv, profile){
   const mo = srv.maoDeObra||0;
   const pcs = totalPecas(srv);
   const cancelado = srv.cancelado||false;
+  const issRate = (srv.issPercent != null) ? srv.issPercent : ISS_PERCENT;
   const SEMPRE_100 = OPCOES_EXTRAS.map(o=>o.toLowerCase());
   const isSempre100 = SEMPRE_100.includes((srv.aparelho||"").toLowerCase().trim())
                    || SEMPRE_100.includes((srv.defeito||"").toLowerCase().trim());
@@ -735,7 +751,7 @@ function calcReceber(srv, profile){
   }
 
   if(profile==="tec"){
-    const nf = mo * 0.94;
+    const nf = mo * (1 - issRate/100);
     return (nf - pcs) / 2;
   } else {
     // Renan / Elisson
@@ -764,7 +780,8 @@ async function dbCarregarUsuarios(){
         profile: d.profile||"tec",
         nomecompleto:d.nomecompleto||"",
         email:d.email||"",
-        cpf:d.cpf||""
+        cpf:"",
+        cnpj:""
       };
     });
     // Make sure admin role is correct
@@ -774,9 +791,7 @@ async function dbCarregarUsuarios(){
 
 async function dbSalvarUsuario(u){
   if(!u||!u.id) return;
-  const row={id:u.id, nome:u.name||u.id, nomecompleto:u.nomecompleto||"",
-    email:u.email||"", cpf:u.cpf||"", profile:u.profile||"tec", password:u.password||""};
-  // PATCH to update — works even if nomecompleto/email/cpf are the only changes
+  const row={id:u.id, nome:u.name||u.id, nomecompleto:u.nomecompleto||"", email:u.email||"", profile:u.profile||"tec", password:u.password||""};
   await sbFetch("/rest/v1/usuarios?id=eq."+u.id,{
     method:"PATCH",
     prefer:"return=minimal",
@@ -855,7 +870,9 @@ function toggleOutro(){
   const v=el("f-aparelho").value;
   el("f-outro-wrap").style.display=(v==="Outro")?"block":"none";
   if(v!=="Outro")el("f-outro").value="";
-  el("f-espec-wrap").style.display=v?"block":"none";
+  // Show espec for any real aparelho that isn't an "opção extra" (100%) type
+  const isOpcExtra=OPCOES_EXTRAS.map(o=>o.toLowerCase()).includes((v||"").toLowerCase());
+  el("f-espec-wrap").style.display=(v&&!isOpcExtra)?"block":"none";
 }
 
 // ── Login ─────────────────────────────────────────────────────────────────────
@@ -909,7 +926,6 @@ function initTec(){
   const infos=[];
   if(ME.nomecompleto) infos.push(`<span>👤 ${ME.nomecompleto}</span>`);
   if(ME.email) infos.push(`<span>✉️ ${ME.email}</span>`);
-  if(ME.cpf) infos.push(`<span>🪪 ${ME.cpf}</span>`);
   const editBtn=`<button onclick="editarMeusDados()" style="background:transparent;border:1px solid var(--border);border-radius:6px;padding:3px 10px;font-size:11px;color:var(--muted);cursor:pointer;margin-top:4px;">✎ Editar meus dados</button>`;
   el("tec-info-extra").innerHTML=infos.length
     ? `<div style="display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);align-items:center;">${infos.join("")}${editBtn}</div>`
@@ -929,12 +945,10 @@ function editarMeusDados(){
   document.getElementById("modal-tec-id").value=ME.id;
   document.getElementById("modal-tec-nc").value=ME.nomecompleto||"";
   document.getElementById("modal-tec-em").value=ME.email||"";
-  document.getElementById("modal-tec-cp").value=ME.cpf||"";
   document.getElementById("modal-tec-ok").classList.add("hidden");
   const mti=document.getElementById("modal-tec-info");
   mti.classList.remove("hidden");
   mti.style.setProperty("display","block","important");
-  // Override save to also update ME
   window._editandoPropriosTec=true;
 }
 
@@ -957,15 +971,19 @@ function renderTecLista(){
   const semSrvs=meus.filter(s=>s.data>=wI&&s.data<=wF);
   const semConserto=semSrvs.reduce((a,s)=>a+s.maoDeObra,0);
   const semReceber=semSrvs.reduce((a,s)=>a+calcReceber(s,profile),0);
+  const [semI,semF]=weekRange();
   el("tec-semana").textContent=fmt(semConserto);
-  el("tec-total-span").innerHTML=` · a receber: <strong style="color:var(--accent)">${fmt(semReceber)}</strong> · ${meus.length} serviço${meus.length!==1?"s":""} no total`;
+  if(el("tec-semana-lbl")) el("tec-semana-lbl").textContent=`Semana (${fmtDt(semI)} → ${fmtDt(semF)}):`;
+  el("tec-total-span").innerHTML=` · a receber: <strong style="color:var(--accent)">${fmt(semReceber)}</strong> · ${fmtDt(semI)} → ${fmtDt(semF)}`;
 
-  // Filtro por período
+  // Filtro por período + busca OS
   const filIni=el("tec-fil-ini").value;
   const filFim=el("tec-fil-fim").value;
+  const buscaOs=(el("tec-busca-os")?el("tec-busca-os").value.trim().toLowerCase():"");
   const filtrados=meus.filter(s=>{
     if(filIni&&s.data<filIni)return false;
     if(filFim&&s.data>filFim)return false;
+    if(buscaOs&&!String(s.os||"").toLowerCase().includes(buscaOs))return false;
     return true;
   });
 
@@ -997,11 +1015,14 @@ function renderTecLista(){
 
   el("tec-count").textContent=filtrados.length;
 
+  const filtradosAtivos=filtrados.filter(s=>!s.cancelado);
+  const totalReceberLista=filtrados.reduce((a,s)=>a+calcReceber(s,profile),0);
+
   if(filtrados.length===0){
     el("lista-servicos").innerHTML='<div style="color:var(--muted);font-size:13px;text-align:center;padding:24px 0;">Nenhum serviço encontrado.</div>';
     return;
   }
-  el("lista-servicos").innerHTML=filtrados.map(srv=>{
+  const listaHtml=filtrados.map(srv=>{
     const tp=totalPecas(srv);
     const receber=calcReceber(srv,profile);
     const cancelado=srv.cancelado||false;
@@ -1033,6 +1054,11 @@ function renderTecLista(){
       </div>
     </div>`;
   }).join("");
+  const totalFooter=`<div style="border-top:2px solid var(--border);margin-top:12px;padding-top:12px;display:flex;gap:16px;flex-wrap:wrap;align-items:center;background:var(--surface);border-radius:0 0 8px 8px;padding:12px 16px;">
+    <span style="font-size:12px;color:var(--muted);">📦 ${filtradosAtivos.length} aparelho${filtradosAtivos.length!==1?"s":""} consertado${filtradosAtivos.length!==1?"s":""}</span>
+    <span style="font-size:13px;font-weight:700;color:var(--accent);">💰 Total a receber: ${fmt(totalReceberLista)}</span>
+  </div>`;
+  el("lista-servicos").innerHTML=listaHtml+totalFooter;
 }
 
 async function salvar(){
@@ -1047,6 +1073,11 @@ async function salvar(){
   if(aparelho==="Outro"&&!el("f-outro").value.trim()){
     alert("Por favor, descreva o aparelho no campo 'Qual aparelho?'."); return;
   }
+  // Verificar OS duplicada (ignorar se estiver editando o mesmo serviço)
+  if(os){
+    const osConflito=SERVICOS.find(s=>String(s.os||"").trim()===String(os).trim()&&s.id!==editId);
+    if(osConflito){alert(`O número de O.S. "${os}" já está em uso (${osConflito.tecNome}, ${fmtDt(osConflito.data)}). Por favor, use um número diferente.`);return;}
+  }
   const espec=el("f-espec").value.trim();
   const aparelhoCompleto=espec?aparelhoFinal+" — "+espec:aparelhoFinal;
   const srvOriginal = editId ? SERVICOS.find(s=>s.id===editId) : null;
@@ -1060,6 +1091,7 @@ async function salvar(){
     dataConserto:el("f-dataconserto").value||"",
     cancelado:el("f-cancelado").checked||false,
     tecId:ME.id, tecNome:ME.name,
+    issPercent: srvOriginal ? (srvOriginal.issPercent ?? ISS_PERCENT) : ISS_PERCENT,
     criadoEm:srvOriginal ? srvOriginal.criadoEm : Date.now(),
     id:editId||crypto.randomUUID(),
     _dbId: srvOriginal ? srvOriginal._dbId : undefined,
@@ -1140,6 +1172,7 @@ function initAdmin(){
   renderTabela();
   renderChartReceber();
   renderLiqReceber();
+  renderChartAparelho();
 }
 
 function renderFiltroTec(){
@@ -1153,16 +1186,41 @@ function renderFiltroTec(){
 
 function renderKpis(){
   const [wI,wF]=getIntervalo();
+  const lbl=getLabelIntervalo();
   const semSrvs=SERVICOS.filter(s=>s.data>=wI&&s.data<=wF);
   const semAtivos=semSrvs.filter(s=>!s.cancelado);
   const totalConserto=semAtivos.reduce((a,s)=>a+s.maoDeObra,0);
   const totalPcs=semAtivos.reduce((a,s)=>a+totalPecas(s),0);
   const totalLiq=totalConserto-totalPcs;
+  // Total A Receber e Diferença Líquida consolidados de todos técnicos
+  let totalReceberGeral=0;
+  let totalDifLiqGeral=0;
+  tecs().forEach(t=>{
+    const tSrvs=SERVICOS.filter(s=>s.tecId===t.id&&s.data>=wI&&s.data<=wF);
+    const profile=t.profile||"tec";
+    totalReceberGeral+=tSrvs.reduce((a,s)=>a+calcReceber(s,profile),0);
+    const tAtivos=tSrvs.filter(s=>!s.cancelado);
+    const c=tAtivos.reduce((a,s)=>a+s.maoDeObra,0);
+    const p=tAtivos.reduce((a,s)=>a+totalPecas(s),0);
+    totalDifLiqGeral+=c-p;
+  });
   let html=`<div class="kpi" style="border-top:3px solid var(--accent);">
-    <div style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.8px;text-transform:uppercase;">Total semana</div>
+    <div style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.8px;text-transform:uppercase;">Total Conserto</div>
     <div class="kpi-val" style="color:var(--accent);">${fmt(totalConserto)}</div>
     <div class="kpi-sub">− peças: <span style="color:var(--success);font-weight:700;">${fmt(totalLiq)}</span></div>
-    <div class="kpi-sub">${el("fil-ini").value&&el("fil-fim").value?"Período":"Semana"}: ${fmtDt(wI)} → ${fmtDt(wF)}</div>
+    <div class="kpi-sub">${lbl}</div>
+  </div>
+  <div class="kpi" style="border-top:3px solid var(--success);">
+    <div style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.8px;text-transform:uppercase;">💰 Total A Receber</div>
+    <div class="kpi-val" style="color:var(--success);">${fmt(totalReceberGeral)}</div>
+    <div class="kpi-sub">Soma todos técnicos</div>
+    <div class="kpi-sub">${lbl}</div>
+  </div>
+  <div class="kpi" style="border-top:3px solid #ffd700;">
+    <div style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.8px;text-transform:uppercase;">📊 Total Diferença Líq.</div>
+    <div class="kpi-val" style="color:#ffd700;">${fmt(totalDifLiqGeral)}</div>
+    <div class="kpi-sub">Conserto − peças todos</div>
+    <div class="kpi-sub">${lbl}</div>
   </div>`;
   tecs().forEach((t,i)=>{
     const c=BAR_COLORS[i%BAR_COLORS.length];
@@ -1170,12 +1228,15 @@ function renderKpis(){
     const tAtivos=tSrvs.filter(s=>!s.cancelado);
     const conserto=tAtivos.reduce((a,s)=>a+s.maoDeObra,0);
     const pcs=tAtivos.reduce((a,s)=>a+totalPecas(s),0);
-    const liq=conserto-pcs;
+    const liqT=conserto-pcs;
+    const profile=t.profile||"tec";
+    const receber=tSrvs.reduce((a,s)=>a+calcReceber(s,profile),0);
     html+=`<div class="kpi" style="border-top:3px solid ${c};">
       <div style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.8px;text-transform:uppercase;">${t.name}</div>
       <div class="kpi-val" style="color:${c};">${fmt(conserto)}</div>
-      <div class="kpi-sub">− peças: <span style="color:var(--success);font-weight:700;">${fmt(liq)}</span></div>
-      <div class="kpi-sub">esta semana</div>
+      <div class="kpi-sub">− peças: <span style="color:var(--success);font-weight:700;">${fmt(liqT)}</span></div>
+      <div class="kpi-sub">a receber: <span style="color:var(--accent);font-weight:700;">${fmt(receber)}</span></div>
+      <div class="kpi-sub">${lbl}</div>
     </div>`;
   });
   el("kpis").innerHTML=html;
@@ -1183,6 +1244,8 @@ function renderKpis(){
 
 function renderChart(){
   const [wI,wF]=getIntervalo();
+  const lbl=getLabelIntervalo();
+  if(el("chart-label-periodo")) el("chart-label-periodo").textContent=lbl;
   const data=tecs().map((t,i)=>{
     const srvs=SERVICOS.filter(s=>s.tecId===t.id&&s.data>=wI&&s.data<=wF);
     const ativos=srvs.filter(s=>!s.cancelado);
@@ -1210,30 +1273,44 @@ function renderChart(){
 function getFiltrados(){
   const ft=el("fil-tec").value, fa=el("fil-ap").value,
     fi=el("fil-ini").value, ff=el("fil-fim").value;
+  const buscaOs=(el("fil-os")?el("fil-os").value.trim().toLowerCase():"");
   return SERVICOS.filter(s=>{
     if(ft!=="todos"&&s.tecId!==ft)return false;
     if(fa!=="todos"&&s.aparelho!==fa)return false;
     if(fi&&s.data<fi)return false;
     if(ff&&s.data>ff)return false;
+    if(buscaOs&&!String(s.os||"").toLowerCase().includes(buscaOs))return false;
     return true;
   }).sort((a,b)=>b.criadoEm-a.criadoEm);
 }
 
 function getIntervalo(){
-  // Returns the active date range: filter dates if set, otherwise current week
   const fi=el("fil-ini").value, ff=el("fil-fim").value;
   if(fi&&ff) return [fi,ff];
   return weekRange();
 }
+function getLabelIntervalo(){
+  const fi=el("fil-ini").value, ff=el("fil-fim").value;
+  if(fi&&ff) return `${fmtDt(fi)} → ${fmtDt(ff)}`;
+  return "Semana Atual";
+}
 
 function renderTabela(){
-  renderKpis(); renderChart(); renderChartReceber(); renderLiqReceber();
+  renderKpis(); renderChart(); renderChartReceber(); renderLiqReceber(); renderChartAparelho();
   const filtrados=getFiltrados();
   el("tab-count").textContent=filtrados.length;
   const mo=filtrados.reduce((a,s)=>a+s.maoDeObra,0);
   const pcs=filtrados.reduce((a,s)=>a+totalPecas(s),0);
+  const totalRec=filtrados.reduce((a,s)=>{
+    const tUser=USERS.find(u=>u.id===s.tecId);
+    const profile=tUser?tUser.profile||"tec":"tec";
+    return a+calcReceber(s,profile);
+  },0);
+  const filtradosAtivosAdm=filtrados.filter(s=>!s.cancelado);
   el("tab-totais").innerHTML=`Valor do Conserto: <span style="color:var(--success);font-weight:700;">${fmt(mo)}</span>
     &nbsp;Peças: <span style="font-weight:700;">${fmt(pcs)}</span>
+    &nbsp;📦 ${filtradosAtivosAdm.length} aparelhos consertados
+    &nbsp;<span style="color:var(--accent);font-weight:700;">💰 A Receber: ${fmt(totalRec)}</span>
 `;
 
   if(filtrados.length===0){
@@ -1273,11 +1350,13 @@ async function excluirAdmin(id){
   const srv=SERVICOS.find(s=>s.id===id);
   if(srv&&srv._dbId) await dbExcluir(srv._dbId);
   SERVICOS=SERVICOS.filter(s=>s.id!==id);
-  renderTabela(); renderKpis(); renderChart(); renderChartReceber(); renderLiqReceber();
+  renderTabela(); renderKpis(); renderChart(); renderChartReceber(); renderLiqReceber(); renderChartAparelho();
 }
 
 function renderLiqReceber(){
   const [wI,wF]=getIntervalo();
+  const lbl=getLabelIntervalo();
+  if(el("chart-dif-label")) el("chart-dif-label").textContent=lbl;
   const wrap=document.getElementById("chart-dif-wrap"); if(!wrap)return;
   const data=tecs().map((t,i)=>{
     const srvs=SERVICOS.filter(s=>s.tecId===t.id&&s.data>=wI&&s.data<=wF);
@@ -1303,6 +1382,8 @@ function renderLiqReceber(){
 
 function renderChartReceber(){
   const [wI,wF]=getIntervalo();
+  const lbl=getLabelIntervalo();
+  if(el("chart-receber-label")) el("chart-receber-label").textContent=lbl;
   const data=tecs().map((t,i)=>{
     const srvs=SERVICOS.filter(s=>s.tecId===t.id&&s.data>=wI&&s.data<=wF);
     const profile=t.profile||"tec";
@@ -1378,11 +1459,15 @@ function preencherSelect(selId, isTecAt){
   const cur=sel.value;
   const isFil=selId==="fil-ap";
   const base=[...APARELHOS_CFG.all];
-  // Extra aparelhos só para tec_at
   const extras=isTecAt?APARELHOS_CFG.atat.filter(o=>!base.includes(o)):[];
-  // Opções extras (100%) só para tec_at ou lancar/admin
   const opcExtras=(isTecAt||selId==="la-aparelho"||selId==="me-aparelho")?OPCOES_EXTRAS:[];
-  const opcoes=[...base,...extras,...opcExtras];
+  // Deduplicate: build full list removing duplicates (case-insensitive)
+  const seen=new Set();
+  const opcoes=[];
+  for(const o of [...base,...extras,...opcExtras]){
+    const key=o.toLowerCase().trim();
+    if(!seen.has(key)){seen.add(key);opcoes.push(o);}
+  }
   sel.innerHTML=(isFil?'<option value="todos">Todos</option>':'<option value="">Selecione...</option>')+
     opcoes.map(o=>`<option value="${o}">${o}</option>`).join("");
   if(cur) sel.value=cur;
@@ -1504,6 +1589,9 @@ async function salvarLancar(){
   const data=el("la-data").value, os=el("la-os").value;
   const aparelho=el("la-aparelho").value, defeito=el("la-defeito").value, mo=el("la-mo").value;
   if(!data||!aparelho||!os||!defeito||!mo){el("la-err").textContent="Preencha os campos obrigatórios.";return;}
+  // Verificar OS duplicada
+  const osConflitoLa=SERVICOS.find(s=>String(s.os||"").trim()===String(os).trim());
+  if(osConflitoLa){el("la-err").textContent=`O.S. "${os}" já está em uso (${osConflitoLa.tecNome}, ${fmtDt(osConflitoLa.data)}).`;return;}
   el("la-err").textContent="";
   const aparelhoFinal=aparelho==="Outro"?(el("la-outro").value.trim()||"Outro"):aparelho;
   const espec=el("la-espec").value.trim();
@@ -1518,6 +1606,7 @@ async function salvarLancar(){
     dataConserto:el("la-dataconserto").value||"",
     cancelado:el("la-cancelado").checked||false,
     tecId:t.id, tecNome:t.name,
+    issPercent: ISS_PERCENT,
     criadoEm:Date.now(), id:crypto.randomUUID(),
   };
   const dbId=await dbSalvar(entry);
@@ -1526,6 +1615,60 @@ async function salvarLancar(){
   const ok=el("la-ok"); ok.classList.remove("hidden");
   setTimeout(()=>ok.classList.add("hidden"),2500);
   initLancar();
+}
+
+// ── Configurações (ISS) ───────────────────────────────────────────────────────
+function abrirConfiguracoes(){
+  const m=document.getElementById("modal-config");
+  document.getElementById("config-iss").value=ISS_PERCENT;
+  document.getElementById("iss-atual-label").textContent=ISS_PERCENT+"%";
+  document.getElementById("config-ok").classList.add("hidden");
+  m.style.setProperty("display","block","important");
+}
+function fecharConfig(){
+  document.getElementById("modal-config").style.setProperty("display","none","important");
+}
+function salvarConfig(){
+  const v=parseFloat(document.getElementById("config-iss").value);
+  if(isNaN(v)||v<0||v>100){alert("Valor inválido. Use entre 0 e 100.");return;}
+  ISS_PERCENT=v;
+  saveIss(v);
+  document.getElementById("iss-atual-label").textContent=v+"%";
+  document.getElementById("config-ok").classList.remove("hidden");
+  setTimeout(()=>{document.getElementById("config-ok").classList.add("hidden");fecharConfig();},1500);
+}
+
+// ── Gráfico Aparelhos por Tipo ────────────────────────────────────────────────
+function renderChartAparelho(){
+  const [wI,wF]=getIntervalo();
+  const lbl=getLabelIntervalo();
+  if(el("chart-apar-label")) el("chart-apar-label").textContent=lbl;
+  const wrap=el("chart-apar-wrap"); if(!wrap)return;
+  const filTec=el("fil-tec").value;
+  const srvs=SERVICOS.filter(s=>{
+    if(s.cancelado)return false;
+    if(s.data<wI||s.data>wF)return false;
+    if(filTec!=="todos"&&s.tecId!==filTec)return false;
+    return true;
+  });
+  if(srvs.length===0){wrap.innerHTML='<div style="color:var(--muted);font-size:13px;">Nenhum aparelho no período.</div>';return;}
+  // Count by aparelho base (strip " — especificação")
+  const counts={};
+  srvs.forEach(s=>{
+    const base=s.aparelho?s.aparelho.split(" — ")[0].trim():s.aparelho;
+    counts[base]=(counts[base]||0)+1;
+  });
+  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  const maxVal=Math.max(...sorted.map(e=>e[1]),1);
+  wrap.innerHTML=sorted.map(([ap,qt],i)=>{
+    const h=Math.max(20,Math.round((qt/maxVal)*100));
+    const c=BAR_COLORS[i%BAR_COLORS.length];
+    return`<div class="bar-col" style="min-width:50px;">
+      <div style="font-size:10px;font-weight:700;color:${c};">${qt}</div>
+      <div style="width:100%;height:${h}px;background:${c};border-radius:6px 6px 0 0;"></div>
+      <div class="bar-label" style="max-width:70px;">${ap}</div>
+    </div>`;
+  }).join("");
 }
 
 // ── Senha do Gestor ───────────────────────────────────────────────────────────
@@ -1590,7 +1733,6 @@ function renderGLista(){
           <div style="font-weight:700;font-size:14px;">${t.name} <span style="font-size:11px;color:var(--muted);font-weight:400;">${perfil}</span></div>
           ${t.nomecompleto?`<div style="font-size:12px;color:var(--muted);margin-top:2px;">👤 ${t.nomecompleto}</div>`:""}
           ${t.email?`<div style="font-size:12px;color:var(--muted);margin-top:1px;">✉️ ${t.email}</div>`:""}
-          ${t.cpf?`<div style="font-size:12px;color:var(--muted);margin-top:1px;">🪪 ${t.cpf}</div>`:""}
           <div style="font-size:11px;color:var(--muted);margin-top:4px;">${qtd} serviço${qtd!==1?"s":""} registrado${qtd!==1?"s":""}</div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
@@ -1610,15 +1752,15 @@ async function adicionarTec(){
   if(USERS.find(u=>u.name.toLowerCase()===nome.toLowerCase())){el("g-err").textContent="Já existe um técnico com esse nome.";return;}
   const id=slugify(nome)+"_"+Date.now().toString(36);
   const profile=el("g-profile").value||"tec";
-  const nomecompleto=el("g-nomecompleto").value.trim();
+  const nomecompleto=el("g-nomecompleto")?el("g-nomecompleto").value.trim():"";
   const email=el("g-email").value.trim();
-  const cpf=el("g-cpf").value.trim();
-  const novoUser={id,name:nome,password:senha,role:"tec",profile,nomecompleto,email,cpf};
+  const novoUser={id,name:nome,password:senha,role:"tec",profile,nomecompleto,email};
   USERS=[...USERS,novoUser];
   saveUsers(USERS);
   await dbSalvarUsuario(novoUser);
   el("g-nome").value=""; el("g-senha").value="";
-  el("g-nomecompleto").value=""; el("g-email").value=""; el("g-cpf").value="";
+  if(el("g-nomecompleto")) el("g-nomecompleto").value="";
+  el("g-email").value="";
   el("g-ok").textContent=`✓ Técnico "${nome}" adicionado!`;
   setTimeout(()=>el("g-ok").textContent="",3000);
   renderGLista(); renderFiltroTec();
@@ -1642,7 +1784,6 @@ function editarInfoTec(id){
   document.getElementById("modal-tec-id").value=id;
   document.getElementById("modal-tec-nc").value=t.nomecompleto||"";
   document.getElementById("modal-tec-em").value=t.email||"";
-  document.getElementById("modal-tec-cp").value=t.cpf||"";
   document.getElementById("modal-tec-ok").classList.add("hidden");
   const mti=document.getElementById("modal-tec-info");
   mti.classList.remove("hidden");
@@ -1654,15 +1795,14 @@ function fecharModalTec(){
 }
 async function salvarInfoTec(){
   const id=document.getElementById("modal-tec-id").value;
-  const nc=document.getElementById("modal-tec-nc").value.trim();
+  const nc=document.getElementById("modal-tec-nc")?document.getElementById("modal-tec-nc").value.trim():"";
   const em=document.getElementById("modal-tec-em").value.trim();
-  const cp=document.getElementById("modal-tec-cp").value.trim();
-  USERS=USERS.map(u=>u.id===id?{...u,nomecompleto:nc,email:em,cpf:cp}:u);
+  USERS=USERS.map(u=>u.id===id?{...u,nomecompleto:nc,email:em}:u);
   saveUsers(USERS);
   const u=USERS.find(u=>u.id===id);
   await dbSalvarUsuario(u);
   if(ME&&ME.id===id){
-    ME={...ME,nomecompleto:nc,email:em,cpf:cp};
+    ME={...ME,nomecompleto:nc,email:em};
     sessionStorage.setItem("toledo_me",JSON.stringify(ME));
   }
   const ok=document.getElementById("modal-tec-ok");
@@ -1716,7 +1856,7 @@ function _doExport(){
   const wb=XLSX.utils.book_new();
   wb.Props={Title:"Toledo Serviços"};
   wb.Workbook={Views:[{RTL:false}]};
-  function fmtData(d){ if(!d)return ""; const p=d.split("-"); return p.length===3?p[2]+"-"+p[1]+"-"+p[0]:d; }
+  function fmtData(d){ if(!d)return ""; const p=d.split("-"); return p.length===3?p[2]+"/"+p[1]+"/"+p[0]:d; }
   function mapRow(s,num,inclTec){
     const r={};
     const tUser=USERS.find(u=>u.id===s.tecId);
@@ -1729,13 +1869,14 @@ function _doExport(){
                || SEMPRE_100_EXP.includes((s.defeito||"").toLowerCase().trim());
 
     // Calculos por perfil
+    const issRateExp = (s.issPercent != null) ? s.issPercent : ISS_PERCENT;
     let nfs6="", valorNfsMenosPecas="", resultado="";
     if(cancelado){
       resultado=-(pcs/2);
       nfs6=""; valorNfsMenosPecas="";
     } else if(profile==="tec"){
-      // Tecnico: NFS 6%, (NFS - Pecas) / 2
-      nfs6=mo*0.94;
+      // Tecnico: NFS com ISS do momento do registro
+      nfs6=mo*(1-issRateExp/100);
       valorNfsMenosPecas=nfs6-pcs;
       resultado=valorNfsMenosPecas/2;
     } else {
@@ -1762,7 +1903,7 @@ function _doExport(){
     r["Valor Peca 3"]=s.peca3valor||0; r["Nome Peca 3"]=s.peca3nome||"";
     r["Total Pecas"]=pcs||"";
     if(profile==="tec"){
-      r["Valor NFS (−6%)"]=nfs6!==""?Number(nfs6.toFixed(2)):"";
+      r[`Valor NFS (−${issRateExp}%)`]=nfs6!==""?Number(nfs6.toFixed(2)):"";
       r["NFS − Pecas"]=valorNfsMenosPecas!==""?Number(valorNfsMenosPecas.toFixed(2)):"";
     } else {
       r["Conserto − Pecas"]=valorNfsMenosPecas!==""?Number(valorNfsMenosPecas.toFixed(2)):"";
