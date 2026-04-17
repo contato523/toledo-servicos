@@ -1203,14 +1203,11 @@ async function excluirTec(id){
   if(!confirm("Excluir este serviço?"))return;
   const srv=SERVICOS.find(s=>s.id===id);
   if(!srv){renderTecLista();return;}
-  if(srv._dbId){
-    const res=await sbFetch("/rest/v1/servicos?id=eq."+srv._dbId,{method:"DELETE",prefer:"return=minimal"});
-    if(res&&res.__error){alert("Erro ao excluir. Verifique a conexão.");return;}
-  }
+  // Remove da tela imediatamente
   SERVICOS=SERVICOS.filter(s=>s.id!==id);
-  // Recarrega silenciosamente para sincronismo
-  dbCarregarServicos().then(()=>renderTecLista());
   renderTecLista();
+  // Apaga do banco em segundo plano (não recarrega — evita o item voltar se RLS bloquear)
+  if(srv._dbId) dbExcluir(srv._dbId);
 }
 
 // ── Admin ─────────────────────────────────────────────────────────────────────
@@ -1455,16 +1452,11 @@ async function excluirAdmin(id){
   if(!confirm("Excluir este serviço?"))return;
   const srv=SERVICOS.find(s=>s.id===id);
   if(!srv){renderTabela();return;}
-  if(srv._dbId){
-    const res=await sbFetch("/rest/v1/servicos?id=eq."+srv._dbId,{method:"DELETE",prefer:"return=minimal"});
-    if(res&&res.__error){alert("Erro ao excluir. Verifique a conexão.");return;}
-  }
+  // Remove da tela imediatamente
   SERVICOS=SERVICOS.filter(s=>s.id!==id);
   renderTabela(); renderKpis(); renderChart(); renderChartReceber(); renderChartPecas(); renderChartIss(); renderLiqReceber(); renderChartAparelho();
-  // Recarrega silenciosamente para sincronismo
-  dbCarregarServicos().then(()=>{
-    renderTabela(); renderKpis(); renderChart(); renderChartReceber(); renderChartPecas(); renderChartIss(); renderLiqReceber(); renderChartAparelho();
-  });
+  // Apaga do banco em segundo plano
+  if(srv._dbId) dbExcluir(srv._dbId);
 }
 
 function renderLiqReceber(){
