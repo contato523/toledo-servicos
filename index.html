@@ -303,7 +303,7 @@ td{padding:10px;border-bottom:1px solid var(--border);}
     <!-- Gráfico -->
     <div class="card" style="margin-bottom:24px;">
       <div style="font-family:sans-serif;font-weight:700;font-size:14px;margin-bottom:14px;">
-        📊 Produção por Técnico — <span id="chart-label-periodo">Semana Atual</span> (barra clara = conserto | barra escura = mão de obra)
+        📊 Produção por Técnico — <span id="chart-label-periodo">Semana Atual</span> (barra clara = conserto | barra escura = mão de obra bruta)
       </div>
       <div id="chart-wrap"></div>
     </div>
@@ -776,16 +776,36 @@ function calcReceber(srv, profile){
     const nf = mo * (1 - issRate/100);
     return (nf - pcs) / 2;
   } else {
-    // Renan / Elisson
+    // Técnico/Atendimento (Renan/Elisson)
     if(isSempre100){
-      return mo; // 100% sem divisão
+      return mo;
     }
-    const liq = mo - pcs;
     if(mo <= 80){
-      return liq;
+      return mo - pcs;
     } else {
-      return liq / 2;
+      return (mo - pcs) / 2;
     }
+  }
+}
+
+// calcResultado: usado no gráfico "Resultados por Técnico"
+// tec_at: só conta serviços >80, extras não entram, fórmula = (mo-pcs)/2
+function calcResultado(srv, profile){
+  const mo = srv.maoDeObra||0;
+  const pcs = totalPecas(srv);
+  const cancelado = srv.cancelado||false;
+  const issRate = (srv.issPercent != null) ? srv.issPercent : ISS_PERCENT;
+  const SEMPRE_100 = OPCOES_EXTRAS.map(o=>o.toLowerCase());
+  const isSempre100 = SEMPRE_100.includes((srv.aparelho||"").toLowerCase().trim())
+                   || SEMPRE_100.includes((srv.defeito||"").toLowerCase().trim());
+  if(cancelado) return -(pcs/2);
+  if(profile==="tec"){
+    const nf = mo * (1 - issRate/100);
+    return (nf - pcs) / 2;
+  } else {
+    if(isSempre100) return 0;  // extras não contam no resultado
+    if(mo <= 80) return 0;      // serviços até 80 não contam no resultado
+    return (mo - pcs) / 2;
   }
 }
 async function dbCarregarUsuarios(){
@@ -1263,9 +1283,9 @@ function renderKpis(){
     <div class="kpi-sub">${lbl}</div>
   </div>
   <div class="kpi" style="border-top:3px solid #ffd700;">
-    <div style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.8px;text-transform:uppercase;">🛠️ Mão de obra</div>
-    <div class="kpi-val" style="color:#ffd700;">${fmt(totalMoGeral)}</div>
-    <div class="kpi-sub">Conserto bruto todos</div>
+    <div style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.8px;text-transform:uppercase;">🛠️ Mão de obra bruta</div>
+    <div class="kpi-val" style="color:#ffd700;">${fmt(totalMoGeral-totalPecasGeral)}</div>
+    <div class="kpi-sub">Conserto − peças todos</div>
     <div class="kpi-sub">${lbl}</div>
   </div>`;
   tecs().forEach((t,i)=>{
@@ -1297,16 +1317,17 @@ function renderChart(){
     const ativos=srvs.filter(s=>!s.cancelado);
     const conserto=ativos.reduce((a,s)=>a+s.maoDeObra,0);
     const pcs=ativos.reduce((a,s)=>a+totalPecas(s),0);
-    return{nome:t.name, conserto, liq:conserto-pcs, color:BAR_COLORS[i%BAR_COLORS.length]};
+    const mob=conserto-pcs;
+    return{nome:t.name, conserto, mob, color:BAR_COLORS[i%BAR_COLORS.length]};
   });
   const maxVal=Math.max(...data.map(d=>d.conserto),1);
   const wrap=el("chart-wrap");
   wrap.innerHTML=data.map(d=>{
     const h=Math.max(8,Math.round((d.conserto/maxVal)*120));
-    const hL=Math.max(4,Math.round((Math.max(0,d.liq)/maxVal)*120));
+    const hL=Math.max(4,Math.round((Math.max(0,d.mob)/maxVal)*120));
     return`<div class="bar-col">
       <div style="font-size:10px;font-weight:700;color:${d.color};">${fmt(d.conserto)}</div>
-      <div style="font-size:9px;color:var(--success);font-weight:700;">liq: ${fmt(d.liq)}</div>
+      <div style="font-size:9px;color:var(--success);font-weight:700;">M.O.B.: ${fmt(d.mob)}</div>
       <div style="position:relative;width:100%;height:${h}px;">
         <div style="position:absolute;bottom:0;width:100%;height:${h}px;background:${d.color}44;border-radius:6px 6px 0 0;"></div>
         <div style="position:absolute;bottom:0;width:100%;height:${hL}px;background:${d.color};border-radius:6px 6px 0 0;"></div>
@@ -1407,7 +1428,7 @@ function renderLiqReceber(){
   const data=tecs().map((t,i)=>{
     const srvs=SERVICOS.filter(s=>s.tecId===t.id&&s.data>=wI&&s.data<=wF);
     const profile=t.profile||"tec";
-    const resultado=srvs.reduce((a,s)=>a+calcReceber(s,profile),0);
+    const resultado=srvs.reduce((a,s)=>a+calcResultado(s,profile),0);
     return{nome:t.name, resultado, color:BAR_COLORS[i%BAR_COLORS.length]};
   });
   const maxVal=Math.max(...data.map(d=>Math.abs(d.resultado)),1);
@@ -2143,6 +2164,15 @@ function _doExport(){
   const nomeTec=filTec!=="todos"?(tecs().find(t=>t.id===filTec)?.name||"Todos"):"Todos";
   XLSX.writeFile(wb,`Toledo_${nomeTec}_${hojeF}.xlsx`,{cellStyles:true, bookSST:false});
 }
+
+// Recarrega lista de aparelhos quando a aba volta ao foco (gestor pode ter adicionado itens)
+document.addEventListener("visibilitychange",function(){
+  if(document.visibilityState==="visible"&&ME){
+    APARELHOS_CFG=loadApar();
+    OPCOES_EXTRAS=loadOpts();
+    preencherTodosSelects();
+  }
+});
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 initLogin();
