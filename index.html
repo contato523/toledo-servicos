@@ -311,7 +311,7 @@ td{padding:10px;border-bottom:1px solid var(--border);}
     <!-- Gráfico A Receber -->
     <div class="card" style="margin-bottom:24px;">
       <div style="font-family:sans-serif;font-weight:700;font-size:14px;margin-bottom:14px;">
-        💰 A Receber por Técnico — <span id="chart-receber-label">Semana Atual</span>
+        💰 A pagar por técnico — <span id="chart-receber-label">Semana Atual</span>
       </div>
       <div id="chart-receber-wrap"></div>
     </div>
@@ -1236,20 +1236,31 @@ function renderKpis(){
   const totalConserto=semAtivos.reduce((a,s)=>a+s.maoDeObra,0);
   const totalPcs=semAtivos.reduce((a,s)=>a+totalPecas(s),0);
   const totalLiq=totalConserto-totalPcs;
-  // Total A Receber, Peças, ISS e Mão de Obra consolidados
+  // Total A Receber, Peças, ISS, Mão de Obra, Resultados e Aparelhos consolidados
   let totalReceberGeral=0;
   let totalPecasGeral=0;
+  let totalQtdPecasGeral=0;
   let totalIssGeral=0;
   let totalMoGeral=0;
+  let totalResultadosGeral=0;
+  let totalAparelhosGeral=0;
   tecs().forEach(t=>{
     const tSrvs=SERVICOS.filter(s=>s.tecId===t.id&&s.data>=wI&&s.data<=wF);
     const profile=t.profile||"tec";
     totalReceberGeral+=tSrvs.reduce((a,s)=>a+calcReceber(s,profile),0);
+    totalResultadosGeral+=tSrvs.reduce((a,s)=>a+calcResultado(s,profile),0);
     const tAtivos=tSrvs.filter(s=>!s.cancelado);
     const mo=tAtivos.reduce((a,s)=>a+s.maoDeObra,0);
     const pcs=tAtivos.reduce((a,s)=>a+totalPecas(s),0);
     totalMoGeral+=mo;
     totalPecasGeral+=pcs;
+    totalAparelhosGeral+=tAtivos.length;
+    // contar quantidade de peças (itens com nome preenchido)
+    tAtivos.forEach(s=>{
+      if(s.peca1nome) totalQtdPecasGeral++;
+      if(s.peca2nome) totalQtdPecasGeral++;
+      if(s.peca3nome) totalQtdPecasGeral++;
+    });
     // ISS só para perfil tec
     if(profile==="tec"){
       tAtivos.forEach(s=>{
@@ -1265,9 +1276,27 @@ function renderKpis(){
     <div class="kpi-sub">${lbl}</div>
   </div>
   <div class="kpi" style="border-top:3px solid var(--success);">
-    <div style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.8px;text-transform:uppercase;">💰 Total A Receber</div>
+    <div style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.8px;text-transform:uppercase;">💰 Total A Pagar</div>
     <div class="kpi-val" style="color:var(--success);">${fmt(totalReceberGeral)}</div>
     <div class="kpi-sub">Soma todos técnicos</div>
+    <div class="kpi-sub">${lbl}</div>
+  </div>
+  <div class="kpi" style="border-top:3px solid #3fb950;">
+    <div style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.8px;text-transform:uppercase;">🏆 Total Resultados</div>
+    <div class="kpi-val" style="color:#3fb950;">${fmt(totalResultadosGeral)}</div>
+    <div class="kpi-sub">Soma resultados técnicos</div>
+    <div class="kpi-sub">${lbl}</div>
+  </div>
+  <div class="kpi" style="border-top:3px solid #58a6ff;">
+    <div style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.8px;text-transform:uppercase;">📦 Aparelhos Consertados</div>
+    <div class="kpi-val" style="color:#58a6ff;">${totalAparelhosGeral}</div>
+    <div class="kpi-sub">Conforme filtro aplicado</div>
+    <div class="kpi-sub">${lbl}</div>
+  </div>
+  <div class="kpi" style="border-top:3px solid #a371f7;">
+    <div style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.8px;text-transform:uppercase;">🔩 Qtd. Peças Usadas</div>
+    <div class="kpi-val" style="color:#a371f7;">${totalQtdPecasGeral}</div>
+    <div class="kpi-sub">Itens de peças no período</div>
     <div class="kpi-sub">${lbl}</div>
   </div>
   <div class="kpi" style="border-top:3px solid #ff7a3d;">
