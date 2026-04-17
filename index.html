@@ -208,22 +208,22 @@ td{padding:10px;border-bottom:1px solid var(--border);}
       <div style="margin-bottom:12px;">
         <div style="font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:600;">Peça 1</div>
         <div class="grid2">
-          <div><label class="lbl">Nome da peça</label><input id="f-p1n" class="input" placeholder="Ex: Placa principal"/></div>
           <div><label class="lbl">Valor (R$)</label><input type="text" id="f-p1v" class="input" inputmode="decimal" onblur="fmtInput('f-p1v')" placeholder="Ex: 50,00"/></div>
+          <div><label class="lbl">Nome da peça</label><input id="f-p1n" class="input" placeholder="Ex: Placa principal"/></div>
         </div>
       </div>
       <div style="margin-bottom:12px;">
         <div style="font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:600;">Peça 2</div>
         <div class="grid2">
-          <div><label class="lbl">Nome da peça</label><input id="f-p2n" class="input" placeholder="Ex: Capacitor"/></div>
           <div><label class="lbl">Valor (R$)</label><input type="text" id="f-p2v" class="input" inputmode="decimal" onblur="fmtInput('f-p2v')" placeholder="Ex: 50,00"/></div>
+          <div><label class="lbl">Nome da peça</label><input id="f-p2n" class="input" placeholder="Ex: Capacitor"/></div>
         </div>
       </div>
       <div style="margin-bottom:12px;">
         <div style="font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:600;">Peça 3</div>
         <div class="grid2">
-          <div><label class="lbl">Nome da peça</label><input id="f-p3n" class="input" placeholder="Ex: Fusível"/></div>
           <div><label class="lbl">Valor (R$)</label><input type="text" id="f-p3v" class="input" inputmode="decimal" onblur="fmtInput('f-p3v')" placeholder="Ex: 50,00"/></div>
+          <div><label class="lbl">Nome da peça</label><input id="f-p3n" class="input" placeholder="Ex: Fusível"/></div>
         </div>
       </div>
       <div class="divider"></div>
@@ -361,16 +361,16 @@ td{padding:10px;border-bottom:1px solid var(--border);}
           <div style="margin-top:14px;"><label class="lbl">Defeito / Serviço *</label><textarea id="me-defeito" class="input" rows="3"></textarea></div>
           <div style="margin-top:14px;"><label class="lbl">Valor do Conserto (R$) *</label><input type="text" id="me-mo" class="input" inputmode="decimal" onblur="fmtInput('me-mo')" placeholder="Ex: 150,00"/></div>
           <div style="margin-top:14px;" class="grid2">
-            <div><label class="lbl">Peça 1 Nome</label><input id="me-p1n" class="input"/></div>
             <div><label class="lbl">Peça 1 Valor</label><input type="text" id="me-p1v" class="input" inputmode="decimal" onblur="fmtInput('me-p1v')"/></div>
+            <div><label class="lbl">Peça 1 Nome</label><input id="me-p1n" class="input"/></div>
           </div>
           <div style="margin-top:10px;" class="grid2">
-            <div><label class="lbl">Peça 2 Nome</label><input id="me-p2n" class="input"/></div>
             <div><label class="lbl">Peça 2 Valor</label><input type="text" id="me-p2v" class="input" inputmode="decimal" onblur="fmtInput('me-p2v')"/></div>
+            <div><label class="lbl">Peça 2 Nome</label><input id="me-p2n" class="input"/></div>
           </div>
           <div style="margin-top:10px;" class="grid2">
-            <div><label class="lbl">Peça 3 Nome</label><input id="me-p3n" class="input"/></div>
             <div><label class="lbl">Peça 3 Valor</label><input type="text" id="me-p3v" class="input" inputmode="decimal" onblur="fmtInput('me-p3v')"/></div>
+            <div><label class="lbl">Peça 3 Nome</label><input id="me-p3n" class="input"/></div>
           </div>
           <div style="margin-top:14px;"><label class="lbl">Observações</label><textarea id="me-obs" class="input" rows="2"></textarea></div>
           <div style="margin-top:14px;"><label class="lbl">Data do Conserto</label><input type="date" id="me-dataconserto" class="input"/></div>
@@ -478,16 +478,16 @@ td{padding:10px;border-bottom:1px solid var(--border);}
       <div style="margin-top:14px;"><label class="lbl">Defeito / Serviço *</label><textarea id="la-defeito" class="input" rows="3" placeholder="Descreva o defeito..."></textarea></div>
       <div style="margin-top:14px;"><label class="lbl">Valor do Conserto (R$) *</label><input type="text" id="la-mo" class="input" inputmode="decimal" onblur="fmtInput('la-mo')" placeholder="Ex: 150,00" placeholder="Ex: 150,00"/></div>
       <div style="margin-top:14px;" class="grid2">
+        <div><label class="lbl">Peça 1 Valor</label><input type="text" id="la-p1v" class="input" inputmode="decimal" onblur="fmtInput('la-p1v')" placeholder="Ex: 50,00"/></div>
         <div><label class="lbl">Peça 1 Nome</label><input id="la-p1n" class="input"/></div>
-        <div><label class="lbl">Peça 1 Valor</label><input type="text" id="la-p1v" class="input" inputmode="decimal" onblur="fmtInput('la-p1v')" placeholder="Ex: 50,00" placeholder="Ex: 50,00"/></div>
       </div>
       <div style="margin-top:10px;" class="grid2">
+        <div><label class="lbl">Peça 2 Valor</label><input type="text" id="la-p2v" class="input" inputmode="decimal" onblur="fmtInput('la-p2v')" placeholder="Ex: 50,00"/></div>
         <div><label class="lbl">Peça 2 Nome</label><input id="la-p2n" class="input"/></div>
-        <div><label class="lbl">Peça 2 Valor</label><input type="text" id="la-p2v" class="input" inputmode="decimal" onblur="fmtInput('la-p2v')" placeholder="Ex: 50,00" placeholder="Ex: 50,00"/></div>
       </div>
       <div style="margin-top:10px;" class="grid2">
+        <div><label class="lbl">Peça 3 Valor</label><input type="text" id="la-p3v" class="input" inputmode="decimal" onblur="fmtInput('la-p3v')" placeholder="Ex: 50,00"/></div>
         <div><label class="lbl">Peça 3 Nome</label><input id="la-p3n" class="input"/></div>
-        <div><label class="lbl">Peça 3 Valor</label><input type="text" id="la-p3v" class="input" inputmode="decimal" onblur="fmtInput('la-p3v')" placeholder="Ex: 50,00" placeholder="Ex: 50,00"/></div>
       </div>
       <div style="margin-top:14px;"><label class="lbl">Observações</label><textarea id="la-obs" class="input" rows="2"></textarea></div>
       <div id="la-dataconserto-wrap" style="margin-top:14px;display:none;"><label class="lbl">Data do Conserto</label><input type="date" id="la-dataconserto" class="input"/></div>
@@ -1203,7 +1203,8 @@ async function excluirTec(id){
   if(!confirm("Excluir este serviço?"))return;
   const srv=SERVICOS.find(s=>s.id===id);
   if(srv&&srv._dbId) await dbExcluir(srv._dbId);
-  SERVICOS=SERVICOS.filter(s=>s.id!==id);
+  // Recarrega do banco para garantir sincronismo em todos os dispositivos
+  await dbCarregarServicos();
   renderTecLista();
 }
 
@@ -1449,7 +1450,8 @@ async function excluirAdmin(id){
   if(!confirm("Excluir este serviço?"))return;
   const srv=SERVICOS.find(s=>s.id===id);
   if(srv&&srv._dbId) await dbExcluir(srv._dbId);
-  SERVICOS=SERVICOS.filter(s=>s.id!==id);
+  // Recarrega do banco para garantir sincronismo em todos os dispositivos
+  await dbCarregarServicos();
   renderTabela(); renderKpis(); renderChart(); renderChartReceber(); renderChartPecas(); renderChartIss(); renderLiqReceber(); renderChartAparelho();
 }
 
@@ -2185,7 +2187,8 @@ function _doExport(){
 
   // ── Aba por técnico ───────────────────────────────────────────────────────
   tecs().forEach(t=>{
-    const rows=SERVICOS.filter(s=>s.tecId===t.id).sort((a,b)=>a.data.localeCompare(b.data));
+    const rows=filtrados.filter(s=>s.tecId===t.id).sort((a,b)=>a.data.localeCompare(b.data));
+    if(rows.length===0) return; // não gera aba vazia
     const ws=XLSX.utils.json_to_sheet(rows.map((s,i)=>mapRow(s,i+1,false)));
     ws["!cols"]=[{wch:4},{wch:10},{wch:12},{wch:30},{wch:40},{wch:10},{wch:13},{wch:12},{wch:22},{wch:12},{wch:22},{wch:12},{wch:22},{wch:10},{wch:16},{wch:16},{wch:18},{wch:30},{wch:14}];
     // sem coluna Tecnico: idx 5(conserto),7,9,11,13(total pecas),14,15,16(resultado)
