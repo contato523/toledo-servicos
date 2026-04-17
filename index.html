@@ -730,7 +730,7 @@ async function dbSalvar(entry){
 }
 
 async function dbExcluir(dbId){
-  await sbFetch("/rest/v1/servicos?id=eq."+dbId,{method:"DELETE",prefer:"return=minimal"});
+  return await sbFetch("/rest/v1/servicos?id=eq."+dbId,{method:"DELETE",prefer:"return=minimal"});
 }
 
 // Usuários ficam no localStorage
@@ -1202,9 +1202,14 @@ function resetForm(){
 async function excluirTec(id){
   if(!confirm("Excluir este serviço?"))return;
   const srv=SERVICOS.find(s=>s.id===id);
-  if(srv&&srv._dbId) await dbExcluir(srv._dbId);
-  // Recarrega do banco para garantir sincronismo em todos os dispositivos
-  await dbCarregarServicos();
+  if(!srv){renderTecLista();return;}
+  if(srv._dbId){
+    const res=await sbFetch("/rest/v1/servicos?id=eq."+srv._dbId,{method:"DELETE",prefer:"return=minimal"});
+    if(res&&res.__error){alert("Erro ao excluir. Verifique a conexão.");return;}
+  }
+  SERVICOS=SERVICOS.filter(s=>s.id!==id);
+  // Recarrega silenciosamente para sincronismo
+  dbCarregarServicos().then(()=>renderTecLista());
   renderTecLista();
 }
 
@@ -1449,10 +1454,17 @@ function renderTabela(){
 async function excluirAdmin(id){
   if(!confirm("Excluir este serviço?"))return;
   const srv=SERVICOS.find(s=>s.id===id);
-  if(srv&&srv._dbId) await dbExcluir(srv._dbId);
-  // Recarrega do banco para garantir sincronismo em todos os dispositivos
-  await dbCarregarServicos();
+  if(!srv){renderTabela();return;}
+  if(srv._dbId){
+    const res=await sbFetch("/rest/v1/servicos?id=eq."+srv._dbId,{method:"DELETE",prefer:"return=minimal"});
+    if(res&&res.__error){alert("Erro ao excluir. Verifique a conexão.");return;}
+  }
+  SERVICOS=SERVICOS.filter(s=>s.id!==id);
   renderTabela(); renderKpis(); renderChart(); renderChartReceber(); renderChartPecas(); renderChartIss(); renderLiqReceber(); renderChartAparelho();
+  // Recarrega silenciosamente para sincronismo
+  dbCarregarServicos().then(()=>{
+    renderTabela(); renderKpis(); renderChart(); renderChartReceber(); renderChartPecas(); renderChartIss(); renderLiqReceber(); renderChartAparelho();
+  });
 }
 
 function renderLiqReceber(){
