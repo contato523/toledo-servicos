@@ -303,7 +303,7 @@ td{padding:10px;border-bottom:1px solid var(--border);}
     <!-- Gráfico -->
     <div class="card" style="margin-bottom:24px;">
       <div style="font-family:sans-serif;font-weight:700;font-size:14px;margin-bottom:14px;">
-        📊 Produção por Técnico — <span id="chart-label-periodo">Semana Atual</span> (barra clara = conserto | barra escura = líquido)
+        📊 Produção por Técnico — <span id="chart-label-periodo">Semana Atual</span> (barra clara = conserto | barra escura = mão de obra)
       </div>
       <div id="chart-wrap"></div>
     </div>
@@ -316,7 +316,27 @@ td{padding:10px;border-bottom:1px solid var(--border);}
       <div id="chart-receber-wrap"></div>
     </div>
 
-    <!-- Modal Editar Serviço -->
+    <!-- Gráfico Total de Peças por Técnico -->
+    <div class="card" style="margin-bottom:24px;">
+      <div style="font-family:sans-serif;font-weight:700;font-size:14px;margin-bottom:14px;">
+        🔧 Total de Peças por Técnico — <span id="chart-pecas-label">Semana Atual</span>
+      </div>
+      <div id="chart-pecas-wrap" style="display:flex;align-items:flex-end;gap:10px;height:150px;padding:0 8px;"></div>
+    </div>
+
+    <!-- Gráfico ISS por Técnico -->
+    <div class="card" style="margin-bottom:24px;">
+      <div style="font-family:sans-serif;font-weight:700;font-size:14px;margin-bottom:14px;">
+        🧾 ISS Retido por Técnico — <span id="chart-iss-label">Semana Atual</span>
+      </div>
+      <div id="chart-iss-wrap" style="display:flex;align-items:flex-end;gap:10px;height:150px;padding:0 8px;"></div>
+    </div>
+
+    <!-- Gráfico Resultados por Técnico -->
+    <div class="card" style="margin-bottom:24px;">
+      <div style="font-family:sans-serif;font-weight:700;font-size:14px;margin-bottom:14px;">📊 Resultados por Técnico — <span id="chart-dif-label">Semana Atual</span></div>
+      <div id="chart-dif-wrap" style="display:flex;align-items:flex-end;gap:10px;height:150px;padding:0 8px;"></div>
+    </div>
     <div id="modal-edit" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#000000aa;z-index:200;overflow-y:auto;">
       <div style="max-width:680px;margin:40px auto;padding:16px;">
         <div class="card" style="position:relative;">
@@ -328,7 +348,15 @@ td{padding:10px;border-bottom:1px solid var(--border);}
           </div>
           <div style="margin-top:14px;">
             <label class="lbl">Aparelho *</label>
-            <select id="me-aparelho" class="input"><option value="">Selecione...</option></select>
+            <select id="me-aparelho" class="input" onchange="toggleOutroAdmin()"><option value="">Selecione...</option></select>
+          </div>
+          <div id="me-outro-wrap" style="display:none;margin-top:10px;">
+            <label class="lbl">Qual aparelho?</label>
+            <input id="me-outro" class="input" placeholder="Descreva o aparelho"/>
+          </div>
+          <div id="me-espec-wrap" style="display:none;margin-top:10px;">
+            <label class="lbl">Marca / Modelo (opcional)</label>
+            <input id="me-espec" class="input" placeholder="Ex: Samsung 55'"/>
           </div>
           <div style="margin-top:14px;"><label class="lbl">Defeito / Serviço *</label><textarea id="me-defeito" class="input" rows="3"></textarea></div>
           <div style="margin-top:14px;"><label class="lbl">Valor do Conserto (R$) *</label><input type="text" id="me-mo" class="input" inputmode="decimal" onblur="fmtInput('me-mo')" placeholder="Ex: 150,00"/></div>
@@ -359,12 +387,6 @@ td{padding:10px;border-bottom:1px solid var(--border);}
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- Gráfico Diferença Líquido vs A Receber -->
-    <div class="card" style="margin-bottom:24px;">
-      <div style="font-family:sans-serif;font-weight:700;font-size:14px;margin-bottom:14px;">📊 Diferença Líquido − A Receber — <span id="chart-dif-label">Semana Atual</span></div>
-      <div id="chart-dif-wrap" style="display:flex;align-items:flex-end;gap:10px;height:150px;padding:0 8px;"></div>
     </div>
 
     <!-- Gráfico Aparelhos Consertados por Período -->
@@ -1171,6 +1193,8 @@ function initAdmin(){
   renderChart();
   renderTabela();
   renderChartReceber();
+  renderChartPecas();
+  renderChartIss();
   renderLiqReceber();
   renderChartAparelho();
 }
@@ -1192,17 +1216,27 @@ function renderKpis(){
   const totalConserto=semAtivos.reduce((a,s)=>a+s.maoDeObra,0);
   const totalPcs=semAtivos.reduce((a,s)=>a+totalPecas(s),0);
   const totalLiq=totalConserto-totalPcs;
-  // Total A Receber e Diferença Líquida consolidados de todos técnicos
+  // Total A Receber, Peças, ISS e Mão de Obra consolidados
   let totalReceberGeral=0;
-  let totalDifLiqGeral=0;
+  let totalPecasGeral=0;
+  let totalIssGeral=0;
+  let totalMoGeral=0;
   tecs().forEach(t=>{
     const tSrvs=SERVICOS.filter(s=>s.tecId===t.id&&s.data>=wI&&s.data<=wF);
     const profile=t.profile||"tec";
     totalReceberGeral+=tSrvs.reduce((a,s)=>a+calcReceber(s,profile),0);
     const tAtivos=tSrvs.filter(s=>!s.cancelado);
-    const c=tAtivos.reduce((a,s)=>a+s.maoDeObra,0);
-    const p=tAtivos.reduce((a,s)=>a+totalPecas(s),0);
-    totalDifLiqGeral+=c-p;
+    const mo=tAtivos.reduce((a,s)=>a+s.maoDeObra,0);
+    const pcs=tAtivos.reduce((a,s)=>a+totalPecas(s),0);
+    totalMoGeral+=mo;
+    totalPecasGeral+=pcs;
+    // ISS só para perfil tec
+    if(profile==="tec"){
+      tAtivos.forEach(s=>{
+        const rate=(s.issPercent!=null)?s.issPercent:ISS_PERCENT;
+        totalIssGeral+=(s.maoDeObra||0)*(rate/100);
+      });
+    }
   });
   let html=`<div class="kpi" style="border-top:3px solid var(--accent);">
     <div style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.8px;text-transform:uppercase;">Total Conserto</div>
@@ -1216,10 +1250,22 @@ function renderKpis(){
     <div class="kpi-sub">Soma todos técnicos</div>
     <div class="kpi-sub">${lbl}</div>
   </div>
+  <div class="kpi" style="border-top:3px solid #ff7a3d;">
+    <div style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.8px;text-transform:uppercase;">🔧 Total Peças</div>
+    <div class="kpi-val" style="color:#ff7a3d;">${fmt(totalPecasGeral)}</div>
+    <div class="kpi-sub">Soma todos técnicos</div>
+    <div class="kpi-sub">${lbl}</div>
+  </div>
+  <div class="kpi" style="border-top:3px solid #f85149;">
+    <div style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.8px;text-transform:uppercase;">🧾 Total ISS</div>
+    <div class="kpi-val" style="color:#f85149;">${fmt(totalIssGeral)}</div>
+    <div class="kpi-sub">Técnicos com NFS</div>
+    <div class="kpi-sub">${lbl}</div>
+  </div>
   <div class="kpi" style="border-top:3px solid #ffd700;">
-    <div style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.8px;text-transform:uppercase;">📊 Total Diferença Líq.</div>
-    <div class="kpi-val" style="color:#ffd700;">${fmt(totalDifLiqGeral)}</div>
-    <div class="kpi-sub">Conserto − peças todos</div>
+    <div style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.8px;text-transform:uppercase;">🛠️ Mão de obra</div>
+    <div class="kpi-val" style="color:#ffd700;">${fmt(totalMoGeral)}</div>
+    <div class="kpi-sub">Conserto bruto todos</div>
     <div class="kpi-sub">${lbl}</div>
   </div>`;
   tecs().forEach((t,i)=>{
@@ -1296,7 +1342,7 @@ function getLabelIntervalo(){
 }
 
 function renderTabela(){
-  renderKpis(); renderChart(); renderChartReceber(); renderLiqReceber(); renderChartAparelho();
+  renderKpis(); renderChart(); renderChartReceber(); renderChartPecas(); renderChartIss(); renderLiqReceber(); renderChartAparelho();
   const filtrados=getFiltrados();
   el("tab-count").textContent=filtrados.length;
   const mo=filtrados.reduce((a,s)=>a+s.maoDeObra,0);
@@ -1350,7 +1396,7 @@ async function excluirAdmin(id){
   const srv=SERVICOS.find(s=>s.id===id);
   if(srv&&srv._dbId) await dbExcluir(srv._dbId);
   SERVICOS=SERVICOS.filter(s=>s.id!==id);
-  renderTabela(); renderKpis(); renderChart(); renderChartReceber(); renderLiqReceber(); renderChartAparelho();
+  renderTabela(); renderKpis(); renderChart(); renderChartReceber(); renderChartPecas(); renderChartIss(); renderLiqReceber(); renderChartAparelho();
 }
 
 function renderLiqReceber(){
@@ -1360,20 +1406,17 @@ function renderLiqReceber(){
   const wrap=document.getElementById("chart-dif-wrap"); if(!wrap)return;
   const data=tecs().map((t,i)=>{
     const srvs=SERVICOS.filter(s=>s.tecId===t.id&&s.data>=wI&&s.data<=wF);
-    const ativos=srvs.filter(s=>!s.cancelado);
     const profile=t.profile||"tec";
-    const liq=ativos.reduce((a,s)=>a+s.maoDeObra,0)-ativos.reduce((a,s)=>a+totalPecas(s),0);
-    const receber=srvs.reduce((a,s)=>a+calcReceber(s,profile),0);
-    const dif=liq-receber;
-    return{nome:t.name, dif, color:BAR_COLORS[i%BAR_COLORS.length]};
+    const resultado=srvs.reduce((a,s)=>a+calcReceber(s,profile),0);
+    return{nome:t.name, resultado, color:BAR_COLORS[i%BAR_COLORS.length]};
   });
-  const maxVal=Math.max(...data.map(d=>Math.abs(d.dif)),1);
+  const maxVal=Math.max(...data.map(d=>Math.abs(d.resultado)),1);
   wrap.style.cssText="display:flex;align-items:flex-end;gap:10px;height:150px;padding:0 8px;";
   wrap.innerHTML=data.map(d=>{
-    const h=Math.max(8,Math.round((Math.abs(d.dif)/maxVal)*120));
-    const cor=d.dif>=0?d.color:"var(--danger)";
+    const h=Math.max(8,Math.round((Math.abs(d.resultado)/maxVal)*120));
+    const cor=d.resultado>=0?d.color:"var(--danger)";
     return `<div class="bar-col">
-      <div style="font-size:10px;font-weight:700;color:${cor};">${fmt(d.dif)}</div>
+      <div style="font-size:10px;font-weight:700;color:${cor};">${fmt(d.resultado)}</div>
       <div style="width:100%;height:${h}px;background:${cor};border-radius:6px 6px 0 0;"></div>
       <div class="bar-label">${d.nome}</div>
     </div>`;
@@ -1405,16 +1448,34 @@ function renderChartReceber(){
   }).join("");
 }
 
+function toggleOutroAdmin(){
+  const v=el("me-aparelho").value;
+  el("me-outro-wrap").style.display=(v==="Outro")?"block":"none";
+  if(v!=="Outro")el("me-outro").value="";
+  const isOpcExtra=OPCOES_EXTRAS.map(o=>o.toLowerCase()).includes((v||"").toLowerCase());
+  el("me-espec-wrap").style.display=(v&&!isOpcExtra)?"block":"none";
+}
+
 function abrirModalEdit(id){
   const srv=SERVICOS.find(s=>s.id===id); if(!srv)return;
   el("me-id").value=id;
   el("me-data").value=srv.data||"";
   el("me-os").value=srv.os||"";
-  // Restore aparelho
-  const stdOpts=["TV","Celular","Notebook","Tablet","Monitor","Ar-condicionado","Micro-ondas","Som/Home Theater","Videogame","Venda","Outro","Atendimento","Extra","Gorjeta"];
+  // Restore aparelho + espec
   const sepIdx=srv.aparelho?srv.aparelho.indexOf(" — "):-1;
-  const aparBase=sepIdx>-1?srv.aparelho.substring(0,sepIdx):srv.aparelho;
-  el("me-aparelho").value=stdOpts.includes(aparBase)?aparBase:"Outro";
+  let aparBase=sepIdx>-1?srv.aparelho.substring(0,sepIdx):srv.aparelho;
+  let especVal=sepIdx>-1?srv.aparelho.substring(sepIdx+3):"";
+  const allOpts=[...APARELHOS_CFG.all,...APARELHOS_CFG.atat,...OPCOES_EXTRAS];
+  const isKnown=allOpts.some(o=>o.toLowerCase()===aparBase.toLowerCase());
+  if(!isKnown){especVal=aparBase+(especVal?" — "+especVal:"");aparBase="Outro";}
+  el("me-aparelho").value=aparBase;
+  if(aparBase==="Outro"){el("me-outro").value=especVal;el("me-outro-wrap").style.display="block";el("me-espec-wrap").style.display="none";}
+  else{
+    el("me-outro").value="";el("me-outro-wrap").style.display="none";
+    const isOpcExtra=OPCOES_EXTRAS.map(o=>o.toLowerCase()).includes(aparBase.toLowerCase());
+    el("me-espec-wrap").style.display=(aparBase&&!isOpcExtra)?"block":"none";
+    el("me-espec").value=especVal;
+  }
   el("me-defeito").value=srv.defeito||"";
   el("me-mo").value=srv.maoDeObra||"";
   el("me-p1n").value=srv.peca1nome||""; el("me-p1v").value=srv.peca1valor||"";
@@ -1433,11 +1494,14 @@ function fecharModalEdit(){
 async function salvarEdicaoAdmin(){
   const id=el("me-id").value;
   const srvOriginal=SERVICOS.find(s=>s.id===id); if(!srvOriginal)return;
-  const aparelho=el("me-aparelho").value;
+  const aparSel=el("me-aparelho").value;
+  const aparelhoFinal=aparSel==="Outro"?(el("me-outro").value.trim()||"Outro"):aparSel;
+  const espec=el("me-espec")&&aparSel!=="Outro"?el("me-espec").value.trim():"";
+  const aparelhoCompleto=espec?aparelhoFinal+" — "+espec:aparelhoFinal;
   const entry={
     ...srvOriginal,
     data:el("me-data").value, os:el("me-os").value,
-    aparelho, defeito:el("me-defeito").value,
+    aparelho:aparelhoCompleto, defeito:el("me-defeito").value,
     maoDeObra:parseMoney(el("me-mo").value),
     peca1nome:el("me-p1n").value, peca1valor:parseMoney(el("me-p1v").value),
     peca2nome:el("me-p2n").value, peca2valor:parseMoney(el("me-p2v").value),
@@ -1448,7 +1512,7 @@ async function salvarEdicaoAdmin(){
   };
   await dbSalvar(entry);
   SERVICOS=SERVICOS.map(s=>s.id===id?entry:s);
-  renderTabela(); renderKpis(); renderChart(); renderChartReceber(); renderLiqReceber();
+  renderTabela(); renderKpis(); renderChart(); renderChartReceber(); renderChartPecas(); renderChartIss(); renderLiqReceber(); renderChartAparelho();
   const ok=el("me-ok"); ok.classList.remove("hidden");
   setTimeout(()=>{ok.classList.add("hidden"); fecharModalEdit();},1500);
 }
@@ -1473,6 +1537,9 @@ function preencherSelect(selId, isTecAt){
   if(cur) sel.value=cur;
 }
 function preencherTodosSelects(){
+  // Reload from localStorage to pick up any changes made in Gerenciar
+  APARELHOS_CFG=loadApar();
+  OPCOES_EXTRAS=loadOpts();
   const profile=ME?ME.profile||"tec":"tec";
   const isTecAt=profile==="tec_at";
   preencherSelect("f-aparelho", isTecAt);
@@ -1617,6 +1684,54 @@ async function salvarLancar(){
   initLancar();
 }
 
+function renderChartPecas(){
+  const [wI,wF]=getIntervalo();
+  const lbl=getLabelIntervalo();
+  if(el("chart-pecas-label")) el("chart-pecas-label").textContent=lbl;
+  const wrap=el("chart-pecas-wrap"); if(!wrap)return;
+  const data=tecs().map((t,i)=>{
+    const srvs=SERVICOS.filter(s=>s.tecId===t.id&&s.data>=wI&&s.data<=wF&&!s.cancelado);
+    const pcs=srvs.reduce((a,s)=>a+totalPecas(s),0);
+    return{nome:t.name, pcs, color:BAR_COLORS[i%BAR_COLORS.length]};
+  });
+  const maxVal=Math.max(...data.map(d=>d.pcs),1);
+  wrap.style.cssText="display:flex;align-items:flex-end;gap:10px;height:150px;padding:0 8px;";
+  wrap.innerHTML=data.map(d=>{
+    const h=Math.max(d.pcs>0?8:0,Math.round((d.pcs/maxVal)*120));
+    return`<div class="bar-col">
+      <div style="font-size:10px;font-weight:700;color:${d.color};">${d.pcs>0?fmt(d.pcs):"—"}</div>
+      <div style="width:100%;height:${h}px;background:${d.color};border-radius:6px 6px 0 0;"></div>
+      <div class="bar-label">${d.nome}</div>
+    </div>`;
+  }).join("");
+}
+
+function renderChartIss(){
+  const [wI,wF]=getIntervalo();
+  const lbl=getLabelIntervalo();
+  if(el("chart-iss-label")) el("chart-iss-label").textContent=lbl;
+  const wrap=el("chart-iss-wrap"); if(!wrap)return;
+  const data=tecs().map((t,i)=>{
+    if((t.profile||"tec")!=="tec") return{nome:t.name,iss:0,color:BAR_COLORS[i%BAR_COLORS.length]};
+    const srvs=SERVICOS.filter(s=>s.tecId===t.id&&s.data>=wI&&s.data<=wF&&!s.cancelado);
+    const iss=srvs.reduce((a,s)=>{
+      const rate=(s.issPercent!=null)?s.issPercent:ISS_PERCENT;
+      return a+(s.maoDeObra||0)*(rate/100);
+    },0);
+    return{nome:t.name, iss, color:BAR_COLORS[i%BAR_COLORS.length]};
+  });
+  const maxVal=Math.max(...data.map(d=>d.iss),1);
+  wrap.style.cssText="display:flex;align-items:flex-end;gap:10px;height:150px;padding:0 8px;";
+  wrap.innerHTML=data.map(d=>{
+    const h=Math.max(d.iss>0?8:0,Math.round((d.iss/maxVal)*120));
+    return`<div class="bar-col">
+      <div style="font-size:10px;font-weight:700;color:${d.color};">${d.iss>0?fmt(d.iss):"—"}</div>
+      <div style="width:100%;height:${h}px;background:${d.color};border-radius:6px 6px 0 0;"></div>
+      <div class="bar-label">${d.nome}</div>
+    </div>`;
+  }).join("");
+}
+
 // ── Configurações (ISS) ───────────────────────────────────────────────────────
 function abrirConfiguracoes(){
   const m=document.getElementById("modal-config");
@@ -1718,6 +1833,7 @@ function showView(v){
   if(v==="gerenciar"){renderGLista();renderOpts();renderAparListas();}
   if(v==="admin"){initAdmin();}
   if(v==="lancar"){initLancar();}
+  if(v==="tec"){preencherTodosSelects();}
 }
 
 function renderGLista(){
