@@ -127,6 +127,7 @@ td{padding:10px;border-bottom:1px solid var(--border);}
   <div class="topbar-right">
     <span id="tb-chip" class="chip chip-accent hidden">GESTOR</span>
     <span id="tb-user" style="font-size:13px;color:var(--muted)"></span>
+    <button class="btn btn-outline-muted btn-sm" onclick="atualizarDados()" title="Atualizar dados">🔄</button>
     <button class="btn btn-outline-muted btn-sm" onclick="logout()">Sair</button>
   </div>
 </div>
@@ -1119,7 +1120,9 @@ async function salvar(){
   }
   // Verificar OS duplicada (ignorar se estiver editando o mesmo serviço)
   if(os){
-    const osConflito=SERVICOS.find(s=>String(s.os||"").trim()===String(os).trim()&&s.id!==editId);
+    const osConflito=(/^\d+$/.test(String(os).trim()))
+      ? SERVICOS.find(s=>String(s.os||"").trim()===String(os).trim()&&s.id!==editId)
+      : null;
     if(osConflito){alert(`O número de O.S. "${os}" já está em uso (${osConflito.tecNome}, ${fmtDt(osConflito.data)}). Por favor, use um número diferente.`);return;}
   }
   const espec=el("f-espec").value.trim();
@@ -1717,7 +1720,9 @@ async function salvarLancar(){
   const aparelho=el("la-aparelho").value, defeito=el("la-defeito").value, mo=el("la-mo").value;
   if(!data||!aparelho||!os||!defeito||!mo){el("la-err").textContent="Preencha os campos obrigatórios.";return;}
   // Verificar OS duplicada
-  const osConflitoLa=SERVICOS.find(s=>String(s.os||"").trim()===String(os).trim());
+  const osConflitoLa=(/^\d+$/.test(String(os).trim()))
+    ? SERVICOS.find(s=>String(s.os||"").trim()===String(os).trim())
+    : null;
   if(osConflitoLa){el("la-err").textContent=`O.S. "${os}" já está em uso (${osConflitoLa.tecNome}, ${fmtDt(osConflitoLa.data)}).`;return;}
   el("la-err").textContent="";
   const aparelhoFinal=aparelho==="Outro"?(el("la-outro").value.trim()||"Outro"):aparelho;
@@ -2077,6 +2082,7 @@ function _doExport(){
     r["Valor Peca 1"]=s.peca1valor||0; r["Nome Peca 1"]=s.peca1nome||"";
     r["Valor Peca 2"]=s.peca2valor||0; r["Nome Peca 2"]=s.peca2nome||"";
     r["Valor Peca 3"]=s.peca3valor||0; r["Nome Peca 3"]=s.peca3nome||"";
+    r["Observacoes"]=s.obs||"";
     r["Total Pecas"]=pcs||"";
     if(profile==="tec"){
       r[`Valor NFS (−${issRateExp}%)`]=nfs6!==""?Number(nfs6.toFixed(2)):"";
@@ -2085,7 +2091,6 @@ function _doExport(){
       r["Conserto − Pecas"]=valorNfsMenosPecas!==""?Number(valorNfsMenosPecas.toFixed(2)):"";
     }
     r["Resultado (A Receber)"]=resultado!==""?Number(Number(resultado).toFixed(2)):"";
-    r["Observacoes"]=s.obs||"";
     r["Data do Conserto"]=fmtData(s.dataConserto||"");
     return r;
   }
@@ -2165,9 +2170,10 @@ function _doExport(){
             bottom:{style:"thin", color:{rgb:borderColor}},
             left:  {style:"thin", color:{rgb:borderColor}},
             right: {style:"thin", color:{rgb:borderColor}}
-          }
+          },
+          numFmt: isMoney&&isNum ? BRL : undefined
         };
-        if(isMoney&&isNum) ws[addr].z=BRL;
+        if(isMoney&&isNum){ ws[addr].z=BRL; ws[addr].t="n"; }
       }
     }
 
@@ -2184,9 +2190,9 @@ function _doExport(){
 
   // ── Aba Todos ─────────────────────────────────────────────────────────────
   const wsTodos=XLSX.utils.json_to_sheet(sorted.map((s,i)=>mapRow(s,i+1,true)));
-  wsTodos["!cols"]=[{wch:4},{wch:14},{wch:10},{wch:12},{wch:30},{wch:40},{wch:10},{wch:13},{wch:12},{wch:22},{wch:12},{wch:22},{wch:12},{wch:22},{wch:10},{wch:16},{wch:16},{wch:18},{wch:30},{wch:14}];
-  // colunas monetarias: idx 6(conserto),8,10,12,14(total pecas),15,16,17(resultado)
-  estilo(wsTodos, sorted.length, wsTodos["!cols"].length, [6,8,10,12,14,15,16,17], 17, 2);
+  wsTodos["!cols"]=[{wch:4},{wch:14},{wch:10},{wch:12},{wch:30},{wch:40},{wch:10},{wch:13},{wch:12},{wch:22},{wch:12},{wch:22},{wch:12},{wch:22},{wch:30},{wch:10},{wch:16},{wch:16},{wch:18},{wch:14}];
+  // monetárias: 7(conserto),8,10,12(peças),15(total peças),16,17(NFS/liq),18(resultado)
+  estilo(wsTodos, sorted.length, wsTodos["!cols"].length, [7,8,10,12,15,16,17,18], 18, 2);
   XLSX.utils.book_append_sheet(wb,wsTodos,"Todos os Servicos");
 
   // ── Aba por técnico ───────────────────────────────────────────────────────
@@ -2194,9 +2200,9 @@ function _doExport(){
     const rows=filtrados.filter(s=>s.tecId===t.id).sort((a,b)=>a.data.localeCompare(b.data));
     if(rows.length===0) return; // não gera aba vazia
     const ws=XLSX.utils.json_to_sheet(rows.map((s,i)=>mapRow(s,i+1,false)));
-    ws["!cols"]=[{wch:4},{wch:10},{wch:12},{wch:30},{wch:40},{wch:10},{wch:13},{wch:12},{wch:22},{wch:12},{wch:22},{wch:12},{wch:22},{wch:10},{wch:16},{wch:16},{wch:18},{wch:30},{wch:14}];
-    // sem coluna Tecnico: idx 5(conserto),7,9,11,13(total pecas),14,15,16(resultado)
-    estilo(ws, rows.length, ws["!cols"].length, [5,7,9,11,13,14,15,16], 16, 1);
+    ws["!cols"]=[{wch:4},{wch:10},{wch:12},{wch:30},{wch:40},{wch:10},{wch:13},{wch:12},{wch:22},{wch:12},{wch:22},{wch:12},{wch:22},{wch:30},{wch:10},{wch:16},{wch:16},{wch:18},{wch:14}];
+    // monetárias: 6(conserto),7,9,11(peças),14(total),15,16(NFS/liq),17(resultado)
+    estilo(ws, rows.length, ws["!cols"].length, [6,7,9,11,14,15,16,17], 17, 1);
     XLSX.utils.book_append_sheet(wb,ws,t.name);
   });
 
@@ -2213,6 +2219,15 @@ document.addEventListener("visibilitychange",function(){
     preencherTodosSelects();
   }
 });
+
+async function atualizarDados(){
+  await dbCarregarServicos();
+  if(ME&&ME.role==="admin"){
+    renderTabela(); renderKpis(); renderChart(); renderChartReceber(); renderChartPecas(); renderChartIss(); renderLiqReceber(); renderChartAparelho();
+  } else if(ME){
+    renderTecLista();
+  }
+}
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 initLogin();
